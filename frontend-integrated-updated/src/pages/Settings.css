@@ -1,0 +1,1083 @@
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
+
+.settings-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   ========================================================= */
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.settings-main {
+  width: calc(100% - var(--cs-sidebar-w));
+  min-height: 100vh;
+
+  margin-left: var(--cs-sidebar-w);
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.settings-page-header {
+  min-height: 88px;
+
+  padding: 22px 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-page-header h1 {
+  margin: 0;
+
+  color: var(--text-primary);
+
+  font-size: 25px;
+  font-weight: 700;
+
+  letter-spacing: -0.4px;
+}
+
+.settings-page-header p {
+  margin: 5px 0 0;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* =========================================================
+   USER PROFILE
+   ========================================================= */
+
+.settings-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.settings-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--primary-light);
+  color: var(--primary-dark);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.settings-user-info strong {
+  display: block;
+
+  color: var(--text-primary);
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.settings-user-info span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: var(--text-muted);
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   MOBILE TOPBAR
+   ========================================================= */
+
+.settings-mobile-topbar {
+  display: none;
+}
+
+.settings-mobile-overlay {
+  display: none;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.settings-content {
+  width: 100%;
+  max-width: 1050px;
+
+  margin: 0 auto;
+
+  padding: 30px 34px 45px;
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.settings-card {
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 19px 20px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-card-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.settings-card-header h2 {
+  margin: 0;
+
+  color: var(--text-primary);
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.settings-card-header p {
+  margin: 4px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   SETTINGS ROW
+   ========================================================= */
+
+.settings-row {
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 15px 20px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-row strong {
+  display: block;
+
+  color: var(--text-primary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-row span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.settings-select {
+  min-width: 150px;
+  height: 37px;
+
+  padding: 0 11px;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: var(--text-primary);
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.settings-select:focus {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px var(--primary-light);
+}
+
+/* =========================================================
+   TOGGLE
+   ========================================================= */
+
+.settings-toggle {
+  position: relative;
+
+  width: 42px;
+  height: 23px;
+
+  min-width: 42px;
+
+  flex: 0 0 42px;
+
+  display: inline-block;
+
+  margin: 0;
+  padding: 0;
+}
+
+.settings-toggle input {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.settings-toggle-slider {
+  position: absolute;
+
+  inset: 0;
+
+  display: block;
+
+  border-radius: 999px;
+
+  background: #cbd5e1;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.settings-toggle-slider::before {
+  content: "";
+
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  width: 17px;
+  height: 17px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.2);
+
+  transition: transform 0.2s ease;
+}
+
+.settings-toggle input:checked + .settings-toggle-slider {
+  background: var(--primary);
+}
+
+.settings-toggle
+  input:checked
+  + .settings-toggle-slider::before {
+  transform: translateX(19px);
+}
+
+.settings-toggle
+  input:focus-visible
+  + .settings-toggle-slider {
+  box-shadow:
+    0 0 0 3px var(--primary-light);
+}
+
+/* =========================================================
+   SECURITY ROW
+   ========================================================= */
+
+.settings-security-row {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 16px 20px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-security-row:last-child {
+  border-bottom: none;
+}
+
+.settings-security-row > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-security-row strong {
+  display: block;
+
+  color: var(--text-primary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-security-row span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   SECONDARY BUTTON
+   ========================================================= */
+
+.settings-secondary-button {
+  min-height: 36px;
+
+  padding: 0 13px;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: var(--text-primary);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.settings-secondary-button:hover {
+  border-color: var(--primary);
+
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 5px;
+}
+
+.settings-save-button {
+  min-height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 17px;
+
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-save-button:hover {
+  border-color: var(--primary-dark);
+
+  background: var(--primary-dark);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   SECURITY NOTICE
+   ========================================================= */
+
+.settings-security-notice {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-top: 20px;
+
+  padding: 15px 17px;
+
+  border: 1px solid var(--primary-light);
+  border-radius: 10px;
+
+  background: var(--primary-soft);
+
+  color: var(--primary-dark);
+}
+
+.settings-security-notice > svg {
+  flex-shrink: 0;
+
+  margin-top: 1px;
+}
+
+.settings-security-notice strong {
+  display: block;
+
+  color: var(--text-primary);
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.settings-security-notice p {
+  margin: 4px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   PASSWORD MODAL
+   ========================================================= */
+
+.settings-password-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 5000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.45);
+
+  backdrop-filter: blur(3px);
+}
+
+.settings-password-modal {
+  width: 100%;
+  max-width: 460px;
+
+  max-height: calc(100vh - 40px);
+
+  overflow-y: auto;
+
+  padding: 24px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.18);
+}
+
+.settings-password-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 22px;
+}
+
+.settings-password-modal-header h2 {
+  margin: 0;
+
+  color: var(--text-primary);
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.settings-password-modal-header p {
+  margin: 5px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+}
+
+.settings-password-modal-close {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: var(--text-secondary);
+}
+
+.settings-password-modal-close:hover {
+  background: #f8fafc;
+
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   MODAL PASSWORD FIELDS
+   ========================================================= */
+
+.settings-modal-password-field {
+  margin-bottom: 17px;
+}
+
+.settings-modal-password-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--text-primary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.settings-modal-password-input {
+  width: 100%;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.settings-modal-password-input:focus-within {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px var(--primary-soft);
+}
+
+.settings-modal-password-input input {
+  flex: 1;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  padding: 0 12px;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--text-primary);
+
+  font-size: 13px;
+}
+
+.settings-modal-password-input input::placeholder {
+  color: var(--text-muted);
+}
+
+.settings-modal-password-input button {
+  width: 42px;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--text-secondary);
+}
+
+.settings-modal-password-input button:hover {
+  color: var(--primary);
+}
+
+.settings-modal-password-field small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--text-muted);
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   PASSWORD MESSAGES
+   ========================================================= */
+
+.settings-password-message {
+  margin-top: 10px;
+
+  padding: 10px 12px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.settings-password-message.error {
+  border: 1px solid #fecaca;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+}
+
+.settings-password-message.success {
+  border: 1px solid #bbf7d0;
+
+  background: #ecfdf5;
+
+  color: #15803d;
+}
+
+/* =========================================================
+   PASSWORD MODAL ACTIONS
+   ========================================================= */
+
+.settings-password-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.settings-cancel-button {
+  min-height: 38px;
+
+  padding: 0 15px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: var(--text-primary);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.settings-cancel-button:hover {
+  background: #f8fafc;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .settings-main {
+    width: calc(100% - var(--cs-sidebar-w));
+    margin-left: var(--cs-sidebar-w);
+  }
+
+  .settings-page-header {
+    padding: 20px 24px;
+  }
+
+  .settings-content {
+    padding: 25px 24px 40px;
+  }
+}
+
+/* =========================================================
+   MOBILE DRAWER
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .settings-mobile-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 90;
+
+    width: 100%;
+    height: 60px;
+
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid var(--border);
+
+    box-shadow: var(--shadow-sm);
+  }
+
+  .settings-mobile-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  .settings-mobile-logo {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: var(--primary);
+    color: #ffffff;
+  }
+
+  .settings-mobile-brand strong {
+    display: block;
+
+    color: var(--text-primary);
+
+    font-size: 15px;
+    line-height: 1.1;
+  }
+
+  .settings-mobile-brand span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--text-secondary);
+
+    font-size: 10px;
+  }
+
+  .settings-mobile-menu-button {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: var(--text-primary);
+  }
+
+  .settings-mobile-menu-button:hover {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+  }
+
+  /* Drawer */
+
+  /* Overlay */
+
+  .settings-mobile-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 95;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    padding: 0;
+
+    border: 0;
+
+    background: rgba(15, 23, 42, 0.42);
+  }
+
+  /* Main */
+
+  .settings-main {
+    width: 100%;
+    min-height: 100vh;
+
+    margin-left: 0;
+
+    padding-top: 60px;
+  }
+
+  .settings-page-header {
+    min-height: 88px;
+
+    padding: 20px 24px;
+  }
+
+  .settings-content {
+    padding: 25px 20px 40px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .settings-mobile-topbar {
+    height: 60px;
+    padding: 0 14px;
+  }
+
+  .settings-page-header {
+    min-height: 88px;
+
+    padding: 18px 16px;
+  }
+
+  .settings-page-header h1 {
+    font-size: 23px;
+  }
+
+  .settings-page-header p {
+    font-size: 12px;
+  }
+
+  .settings-user-profile {
+    display: none;
+  }
+
+  .settings-content {
+    padding: 20px 16px 30px;
+  }
+
+  .settings-card-header {
+    padding: 16px;
+  }
+
+  .settings-card-header h2 {
+    font-size: 14px;
+  }
+
+  .settings-row,
+  .settings-security-row {
+    gap: 12px;
+
+    padding: 15px 16px;
+  }
+
+  .settings-select {
+    min-width: 120px;
+  }
+
+  .settings-actions {
+    justify-content: stretch;
+  }
+
+  .settings-save-button {
+    width: 100%;
+  }
+
+  .settings-security-notice {
+    padding: 14px;
+  }
+
+  .settings-password-modal-overlay {
+    padding: 14px;
+  }
+
+  .settings-password-modal {
+    max-width: 100%;
+
+    padding: 20px;
+
+    border-radius: 12px;
+  }
+
+  .settings-password-modal-header h2 {
+    font-size: 18px;
+  }
+
+  .settings-password-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .settings-password-modal-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+  .settings-page-header {
+    min-height: 88px;
+
+    padding: 16px 12px;
+  }
+
+  .settings-page-header h1 {
+    font-size: 21px;
+  }
+
+  .settings-content {
+    padding: 16px 12px 28px;
+  }
+
+  .settings-card-header {
+    gap: 10px;
+  }
+
+  .settings-card-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .settings-row,
+  .settings-security-row {
+    gap: 8px;
+  }
+
+  .settings-toggle {
+    width: 42px;
+    min-width: 42px;
+  }
+
+  .settings-select {
+    min-width: 110px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-toggle-slider,
+  .settings-toggle-slider::before,
+  .settings-secondary-button,
+  .settings-save-button {
+    transition: none;
+  }
+}

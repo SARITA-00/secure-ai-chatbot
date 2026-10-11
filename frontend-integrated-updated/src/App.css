@@ -1,0 +1,351 @@
+
+/* =========================================================
+   NOVACART CHATBOT
+   GLOBAL APP STYLES
+   ========================================================= */
+
+/* =========================================================
+   THEME VARIABLES
+   ========================================================= */
+
+:root {
+  --primary: #d86b8a;
+  --primary-dark: #b95572;
+  --primary-light: #f7dce5;
+  --primary-soft: #fdf3f6;
+
+  --bg-main: #f4f7fb;
+  --bg-card: #ffffff;
+
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  --border: #e5e7eb;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+
+  --sidebar-bg: #3f3440;
+
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: var(--bg-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =========================================================
+   GLOBAL TRANSITIONS
+   ========================================================= */
+
+button,
+input,
+select,
+textarea,
+a {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* =========================================================
+   THEME TRANSITIONS
+   ========================================================= */
+
+body,
+button,
+input,
+select,
+textarea {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* =========================================================
+   LEGACY CUSTOMER SIDEBAR
+   Retained for pages that still use these class names.
+   ========================================================= */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+
+  background: var(--sidebar-bg);
+  color: #f8eef2;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.nav-item:hover {
+  background: #54434f;
+  color: #fff;
+}
+
+/* =========================================================
+   THEME BUTTONS
+   ========================================================= */
+
+.admin-save-button,
+.export-report-button,
+.export-log-button {
+  border: none;
+  border-radius: 9px;
+  padding: 10px 16px;
+
+  background: var(--primary);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-save-button:hover,
+.export-report-button:hover,
+.export-log-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   TOGGLES
+   ========================================================= */
+
+.admin-toggle-row input:checked + .admin-toggle {
+  background: var(--primary);
+}
+
+/* =========================================================
+   FORM FOCUS
+   ========================================================= */
+
+.admin-setting-field input:focus,
+.admin-setting-field select:focus,
+.admin-setting-field textarea:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+/* =========================================================
+   SETTINGS ICONS
+   ========================================================= */
+
+.admin-settings-section-icon.general {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.admin-status-dot {
+  background: var(--primary);
+}
+
+/* =========================================================
+   GENERAL CARD HOVER
+   ========================================================= */
+
+.summary-card,
+.activity-summary-card,
+.activity-log-card,
+.admin-activity-log-card,
+.admin-settings-card,
+.admin-danger-zone,
+.report-card,
+.report-stat-card,
+.admin-stat-card,
+.conversation-card,
+.history-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.summary-card:hover,
+.activity-summary-card:hover,
+.activity-log-card:hover,
+.admin-activity-log-card:hover,
+.admin-settings-card:hover,
+.admin-danger-zone:hover,
+.report-card:hover,
+.report-stat-card:hover,
+.admin-stat-card:hover,
+.conversation-card:hover,
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-main {
+  animation: pageFadeIn 0.4s ease-out;
+}
+
+.admin-status-dot {
+  animation: softPulse 2s ease-in-out infinite;
+}
+
+.chat-message {
+  animation: messageAppear 0.25s ease-out;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .summary-card:hover,
+  .activity-summary-card:hover,
+  .activity-log-card:hover,
+  .admin-activity-log-card:hover,
+  .admin-settings-card:hover,
+  .admin-danger-zone:hover,
+  .report-card:hover,
+  .report-stat-card:hover,
+  .admin-stat-card:hover,
+  .conversation-card:hover,
+  .history-card:hover {
+    transform: none;
+  }
+}

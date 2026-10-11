@@ -1,0 +1,678 @@
+
+/* =========================================
+   USER MANAGEMENT PAGE
+========================================= */
+
+/* =========================================
+   SIDEBAR — MATCHES ADMIN DASHBOARD
+========================================= */
+
+/* =========================================
+   MOBILE CONTROLS
+========================================= */
+
+/* =========================================
+   MAIN LAYOUT
+========================================= */
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.user-management-page .um-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.user-management-page .um-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  min-height: 87px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-management-page .um-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.user-management-page .um-summary-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+}
+
+.user-management-page .um-summary-icon.blue {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.user-management-page .um-summary-icon.green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.user-management-page .um-summary-icon.orange {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.user-management-page .um-summary-icon.purple {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.user-management-page .um-summary-info {
+  min-width: 0;
+}
+
+.user-management-page .um-summary-info span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.user-management-page .um-summary-info strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 21px;
+  font-weight: 700;
+}
+
+/* =========================================
+   MANAGEMENT CARD
+========================================= */
+
+.user-management-page .um-management-card {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-management-page .um-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 23px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.user-management-page .um-card-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.user-management-page .um-card-header p {
+  margin: 5px 0 0;
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.user-management-page .um-add-user-button {
+  min-height: 39px;
+  padding: 10px 15px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-management-page .um-add-user-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   SEARCH AND FILTERS
+========================================= */
+
+.user-management-page .um-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 17px 23px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.user-management-page .um-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+  max-width: 420px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d9dfe8;
+  border-radius: 8px;
+  background: #fff;
+  color: #8a94a3;
+}
+
+.user-management-page .um-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.user-management-page .um-search svg {
+  flex-shrink: 0;
+}
+
+.user-management-page .um-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.user-management-page .um-search input::placeholder {
+  color: #9aa3b1;
+}
+
+.user-management-page .um-filter-select {
+  height: 40px;
+  min-width: 130px;
+  max-width: 180px;
+  padding: 0 10px;
+  border: 1px solid #d9dfe8;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #4b5565;
+  font-size: 12px;
+}
+
+.user-management-page .um-filter-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* =========================================
+   USERS TABLE
+========================================= */
+
+.user-management-page .um-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.user-management-page .um-users-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.user-management-page .um-users-table th {
+  padding: 13px 18px;
+  border-bottom: 1px solid #e9edf3;
+  background: #f8fafc;
+  color: #7b8494;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.user-management-page .um-users-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #edf0f4;
+  color: #5e6878;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.user-management-page .um-users-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.user-management-page .um-users-table tbody tr:hover {
+  background: var(--primary-soft);
+}
+
+.user-management-page .um-users-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* =========================================
+   USER INFORMATION
+========================================= */
+
+.user-management-page .um-table-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+}
+
+.user-management-page .um-table-user-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.user-management-page .um-user-details {
+  min-width: 0;
+}
+
+.user-management-page .um-user-details strong {
+  display: block;
+  color: #273246;
+  font-size: 12px;
+}
+
+.user-management-page .um-user-details span {
+  display: block;
+  margin-top: 4px;
+  color: #8a94a3;
+  font-size: 10px;
+}
+
+/* =========================================
+   ROLE AND STATUS BADGES
+========================================= */
+
+.user-management-page .um-role-badge,
+.user-management-page .um-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.user-management-page .um-role-badge {
+  padding: 5px 9px;
+}
+
+.user-management-page .um-role-badge.customer {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.user-management-page .um-role-badge.admin {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.user-management-page .um-status-badge {
+  gap: 5px;
+  padding: 5px 9px;
+}
+
+.user-management-page .um-status-badge.active {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.user-management-page .um-status-badge.suspended {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.user-management-page .um-status-dot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* =========================================
+   TABLE ACTIONS
+========================================= */
+
+.user-management-page .um-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.user-management-page .um-table-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e1e6ed;
+  border-radius: 7px;
+  background: #fff;
+  color: #697386;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.user-management-page .um-table-action-button:hover {
+  border-color: var(--primary-light);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.user-management-page .um-table-action-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.user-management-page .um-no-users {
+  padding: 40px 20px !important;
+  color: #8993a3 !important;
+  text-align: center;
+  white-space: normal !important;
+}
+
+/* =========================================
+   PAGINATION
+========================================= */
+
+.user-management-page .um-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px 20px;
+  border-top: 1px solid #edf0f4;
+  color: #8993a3;
+  font-size: 11px;
+}
+
+.user-management-page .um-pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-management-page .um-pagination-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 29px;
+  height: 29px;
+  padding: 0 7px;
+  border: 1px solid #e0e5ec;
+  border-radius: 6px;
+  background: #fff;
+  color: #667085;
+  font-size: 11px;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.user-management-page .um-pagination-buttons button:hover:not(:disabled) {
+  border-color: var(--primary-light);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.user-management-page .um-pagination-buttons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.user-management-page .um-pagination-buttons .um-pagination-active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.user-management-page .um-pagination-buttons > span {
+  padding: 0 4px;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .user-management-page .um-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================
+   MOBILE DRAWER
+========================================= */
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .user-management-page .um-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 19px;
+  }
+
+  .user-management-page .um-summary-card {
+    min-height: 76px;
+    padding: 15px;
+  }
+
+  .user-management-page .um-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .user-management-page .um-add-user-button {
+    width: 100%;
+  }
+
+  .user-management-page .um-filters {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 11px;
+    padding: 15px 18px;
+  }
+
+  .user-management-page .um-search {
+    width: 100%;
+    max-width: none;
+    flex: auto;
+  }
+
+  .user-management-page .um-filter-select {
+    width: 100%;
+    max-width: none;
+  }
+
+  .user-management-page .um-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px 18px;
+  }
+
+  .user-management-page .um-pagination-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+
+  .user-management-page .um-card-header,
+  .user-management-page .um-filters,
+  .user-management-page .um-pagination {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .user-management-page .um-summary-card {
+    gap: 11px;
+  }
+
+  .user-management-page .um-summary-icon {
+    width: 39px;
+    height: 39px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .user-management-page .um-summary-card,
+  .user-management-page .um-add-user-button,
+  .user-management-page .um-table-action-button {
+    transition: none;
+  }
+
+  .user-management-page .um-summary-card:hover,
+  .user-management-page .um-add-user-button:hover {
+    transform: none;
+  }
+}
+
+/* ---- Row actions: disabled / danger states ---- */
+.user-management-page .um-table-action-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.user-management-page .um-table-action-button.danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+.user-management-page .um-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-management-page .um-pagination {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---- Phones: table rows become cards ---- */
+@media (max-width: 900px) {
+  .user-management-page .um-table-wrapper {
+    overflow: visible;
+  }
+
+  .user-management-page .um-users-table,
+  .user-management-page .um-users-table tbody,
+  .user-management-page .um-users-table tr,
+  .user-management-page .um-users-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .user-management-page .um-users-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .user-management-page .um-users-table tbody tr {
+    margin-bottom: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-card);
+  }
+
+  .user-management-page .um-users-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    border: none;
+    text-align: right;
+    font-size: 13px;
+  }
+
+  .user-management-page .um-users-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .user-management-page .um-users-table td:first-child {
+    padding-top: 0;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .user-management-page .um-users-table td:first-child::before,
+  .user-management-page .um-users-table td:last-child::before {
+    display: none;
+  }
+
+  .user-management-page .um-users-table td:last-child {
+    padding-bottom: 0;
+    justify-content: flex-end;
+  }
+
+  .user-management-page .um-users-table .um-empty-row {
+    border: none;
+    padding: 0;
+    background: none;
+  }
+
+  .user-management-page .um-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,733 @@
+/* =========================================================
+   ADMIN SETTINGS
+========================================================= */
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.admin-save-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.admin-save-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SETTINGS CARDS
+========================================================= */
+
+.admin-settings-card {
+  width: 100%;
+  max-width: 100%;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e5eaf1;
+  border-radius: 14px;
+
+  padding: 24px;
+  margin-bottom: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.admin-settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 24px;
+}
+
+.admin-settings-card-header h2 {
+  margin: 0 0 4px;
+
+  font-size: 18px;
+  color: #172033;
+}
+
+.admin-settings-card-header p {
+  margin: 0;
+
+  font-size: 13px;
+  color: #718096;
+}
+
+
+/* =========================================================
+   SECTION ICONS
+========================================================= */
+
+.admin-settings-section-icon {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-settings-section-icon.general {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.admin-settings-section-icon.ai {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.admin-settings-section-icon.security {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.admin-settings-section-icon.notification {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.admin-settings-section-icon.data {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.admin-settings-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 20px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+
+.admin-setting-field {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.admin-setting-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-setting-field input,
+.admin-setting-field select {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #172033;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.admin-setting-field input:focus,
+.admin-setting-field select:focus {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--primary) 12%,
+      transparent
+    );
+}
+
+.admin-setting-field input:read-only {
+  background: #f8fafc;
+}
+
+.admin-setting-field small {
+  color: #8a94a6;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SYSTEM STATUS
+========================================================= */
+
+.admin-status-input {
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #374151;
+
+  font-size: 13px;
+}
+
+.admin-status-dot {
+  width: 8px;
+  height: 8px;
+
+  min-width: 8px;
+
+  border-radius: 50%;
+
+  background: #10b981;
+}
+
+
+/* =========================================================
+   SECURITY / NOTIFICATION SETTINGS
+========================================================= */
+
+.admin-security-settings {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-security-setting {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px 0;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.admin-security-setting:first-child {
+  padding-top: 0;
+}
+
+.admin-security-setting:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.admin-security-setting > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-security-setting strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #263247;
+
+  font-size: 14px;
+}
+
+.admin-security-setting p {
+  margin: 0;
+
+  color: #7b8798;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+========================================================= */
+
+.admin-toggle-row {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  flex: 0 0 auto;
+
+  cursor: pointer;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Hide checkbox */
+
+.admin-toggle-row input[type="checkbox"] {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* Toggle track */
+
+.admin-toggle {
+  position: relative;
+
+  display: block;
+
+  width: 44px;
+  height: 24px;
+
+  min-width: 44px;
+
+  border-radius: 999px;
+
+  background: #cbd5e1;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* Toggle knob */
+
+.admin-toggle::after {
+  content: "";
+
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.2);
+
+  transition:
+    transform 0.2s ease;
+}
+
+
+/* OFF */
+
+.admin-toggle-row input:not(:checked) + .admin-toggle {
+  background: #cbd5e1;
+}
+
+.admin-toggle-row input:not(:checked) + .admin-toggle::after {
+  transform: translateX(0);
+}
+
+
+/* ON */
+
+.admin-toggle-row input:checked + .admin-toggle {
+  background: #10b981;
+
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.10);
+}
+
+.admin-toggle-row input:checked + .admin-toggle::after {
+  transform: translateX(20px);
+}
+
+
+/* =========================================================
+   AI STATUS
+========================================================= */
+
+.admin-setting-field .admin-toggle-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  width: max-content;
+}
+
+.admin-setting-field .admin-toggle-row > span:last-child {
+  display: block;
+
+  white-space: nowrap;
+
+  color: #263247;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   SECURITY TOGGLE POSITION
+========================================================= */
+
+.admin-security-setting > .admin-toggle-row {
+  flex: 0 0 44px;
+
+  width: 44px;
+  min-width: 44px;
+
+  height: 24px;
+
+  margin-left: auto;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.admin-toggle-row input:focus-visible + .admin-toggle {
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.20);
+}
+
+
+/* =========================================================
+   SECURITY NOTE
+========================================================= */
+
+.admin-security-note {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 22px;
+
+  padding: 13px 14px;
+
+  border-radius: 8px;
+
+  background: var(--primary-soft);
+
+  color: var(--primary-dark);
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+.admin-security-note svg {
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   DANGER ZONE
+========================================================= */
+
+.admin-danger-zone {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 22px 24px;
+
+  margin-bottom: 20px;
+
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+
+  background: #fffafa;
+}
+
+.admin-danger-zone h2 {
+  margin: 0 0 5px;
+
+  color: #b91c1c;
+
+  font-size: 17px;
+}
+
+.admin-danger-zone p {
+  margin: 0;
+
+  color: #7f1d1d;
+
+  font-size: 12px;
+}
+
+.admin-danger-actions {
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+.admin-danger-button {
+  padding: 10px 14px;
+
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #dc2626;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.admin-danger-button:hover {
+  background: #fef2f2;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.admin-settings-footer {
+  text-align: center;
+
+  padding: 10px 0 30px;
+
+  color: #9aa4b2;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .admin-settings-card {
+    padding: 22px;
+  }
+
+  .admin-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-danger-zone {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .admin-settings-card {
+    padding: 18px;
+  }
+
+  .admin-settings-card-header {
+    align-items: flex-start;
+  }
+
+  .admin-security-setting {
+    gap: 12px;
+  }
+
+  .admin-security-setting strong {
+    font-size: 13px;
+  }
+
+  .admin-security-setting p {
+    font-size: 11px;
+  }
+
+  .admin-danger-actions {
+    width: 100%;
+
+    flex-direction: column;
+  }
+
+  .admin-danger-button {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 450px) {
+  .admin-settings-card {
+    padding: 16px;
+  }
+
+  .admin-settings-card-header {
+    gap: 10px;
+  }
+
+  .admin-settings-section-icon {
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+  }
+
+  .admin-settings-card-header h2 {
+    font-size: 16px;
+  }
+
+  .admin-settings-card-header p {
+    font-size: 12px;
+  }
+
+  .admin-toggle {
+    width: 42px;
+    min-width: 42px;
+  }
+
+  .admin-toggle-row input:checked + .admin-toggle::after {
+    transform: translateX(18px);
+  }
+}
+/* ---- Banners, validation, labels ---- */
+.admin-maintenance-banner,
+.admin-unsaved-banner {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-maintenance-banner {
+  border: 1px solid #fcd34d;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.admin-unsaved-banner {
+  border: 1px solid var(--primary-light);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.admin-field-error {
+  color: var(--danger) !important;
+}
+
+.admin-setting-field input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.admin-field-label {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-save-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .admin-danger-actions {
+    flex-direction: column;
+  }
+
+  .admin-danger-actions .admin-danger-button {
+    width: 100%;
+  }
+}

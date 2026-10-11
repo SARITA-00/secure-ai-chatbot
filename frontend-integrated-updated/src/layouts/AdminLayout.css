@@ -1,0 +1,716 @@
+/* =========================================================
+   ADMIN LAYOUT – single source of truth for the admin shell
+   (sidebar, drawer, top bar, page header, notifications)
+   ========================================================= */
+
+.al-shell {
+  --al-sidebar-width: 260px;
+  --al-gutter: 32px;
+
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.al-skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 3000;
+
+  padding: 10px 14px;
+  border-radius: 8px;
+
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+
+  transform: translateY(-200%);
+}
+
+.al-skip-link:focus {
+  transform: none;
+}
+
+/* ---------- Sidebar ---------- */
+
+.al-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+
+  width: var(--al-sidebar-width);
+  height: 100vh;
+  height: 100dvh;
+
+  background: var(--sidebar-bg);
+  color: #f8eef2;
+
+  transition: transform 0.25s ease;
+}
+
+.al-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  height: 88px;
+  min-height: 88px;
+  padding: 0 20px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.al-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+}
+
+.al-brand-text strong {
+  display: block;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.al-brand-text span {
+  display: block;
+  margin-top: 3px;
+  color: #cdbfc7;
+  font-size: 11px;
+}
+
+.al-drawer-close {
+  display: none;
+}
+
+.al-nav {
+  flex: 1;
+  min-height: 0;
+  padding: 20px 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.al-nav-group + .al-nav-group {
+  margin-top: 20px;
+}
+
+.al-nav-title {
+  margin: 0 10px 10px;
+  color: #a995a3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.al-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-height: 44px;
+  margin-bottom: 4px;
+  padding: 0 13px;
+
+  border-radius: 9px;
+  color: #e4d9df;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.al-nav-item svg {
+  flex-shrink: 0;
+}
+
+.al-nav-item:hover {
+  background: #54434f;
+  color: #fff;
+}
+
+.al-nav-item.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.al-nav-item:focus-visible,
+.al-logout:focus-visible,
+.al-icon-button:focus-visible,
+.al-drawer-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.al-sidebar-bottom {
+  padding: 14px 12px calc(18px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.al-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 12px;
+}
+
+.al-sidebar-user strong {
+  display: block;
+  color: #fff;
+  font-size: 13px;
+}
+
+.al-sidebar-user span {
+  display: block;
+  margin-top: 2px;
+  color: #cdbfc7;
+  font-size: 11px;
+}
+
+.al-avatar-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.al-logout {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-height: 44px;
+  padding: 0 13px;
+
+  border-radius: 9px;
+  color: #e4d9df;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.al-logout:hover {
+  background: #54434f;
+  color: #fff;
+}
+
+/* ---------- Overlay ---------- */
+
+.al-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+
+  border: none;
+  background: rgba(23, 32, 51, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* ---------- Main column ---------- */
+
+.al-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--al-sidebar-width);
+}
+
+.al-topbar {
+  display: none;
+}
+
+.al-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  min-height: 88px;
+  margin: 0 var(--al-gutter);
+  padding: 20px 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.al-header-title {
+  min-width: 0;
+}
+
+.al-header-title h1 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.al-header-title p {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.al-header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 14px;
+}
+
+.al-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.al-icon-button {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--bg-card);
+  color: var(--text-secondary);
+}
+
+.al-icon-button:hover {
+  border-color: var(--primary-light);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.al-notice-dot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+
+  width: 9px;
+  height: 9px;
+
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.al-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.al-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.al-profile-text strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.al-profile-text span {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.al-content {
+  min-width: 0;
+  margin: 0 var(--al-gutter);
+  padding: 28px 0 56px;
+  outline: none;
+}
+
+/* ---------- Notifications ---------- */
+
+.al-notices {
+  position: relative;
+}
+
+.al-notice-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 1200;
+
+  width: 360px;
+  max-width: calc(100vw - 32px);
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--bg-card);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+}
+
+.al-notice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.al-notice-head strong {
+  font-size: 14px;
+}
+
+.al-notice-head button {
+  border: none;
+  background: none;
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.al-notice-head button:disabled {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.al-notice-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-notice-panel li + li {
+  border-top: 1px solid var(--border);
+}
+
+.al-notice-panel li a {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 16px;
+}
+
+.al-notice-panel li a:hover {
+  background: var(--bg-main);
+}
+
+.al-notice-panel li a.unread {
+  background: var(--primary-soft);
+}
+
+.al-notice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+
+  border-radius: 9px;
+}
+
+.al-notice-icon.danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.al-notice-icon.warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+.al-notice-icon.info {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.al-notice-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.al-notice-copy strong {
+  font-size: 13px;
+}
+
+.al-notice-copy span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.al-notice-copy small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* ---------- Shared page-level primitives ---------- */
+
+.al-primary-button,
+.al-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 0 18px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.al-primary-button {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.al-primary-button:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.al-primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.al-secondary-button {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.al-secondary-button:hover {
+  background: var(--primary-soft);
+}
+
+/* ---------- Tablet: sidebar becomes a drawer ---------- */
+
+@media (max-width: 900px) {
+  .al-shell {
+    --al-gutter: 24px;
+  }
+
+  .al-sidebar {
+    width: 280px;
+    max-width: 86vw;
+
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.25s ease,
+      visibility 0s linear 0.25s;
+  }
+
+  .al-sidebar.open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.25s ease;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .al-drawer-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+    margin-left: auto;
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .al-main {
+    margin-left: 0;
+  }
+
+  .al-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 800;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: calc(10px + env(safe-area-inset-top, 0px)) var(--al-gutter) 10px;
+
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .al-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .al-topbar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .al-topbar-brand strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .al-topbar-brand small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .al-header {
+    min-height: 0;
+    padding: 20px 0 16px;
+  }
+
+  .al-header-title h1 {
+    font-size: 23px;
+  }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 700px) {
+  .al-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .al-header-right {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .al-header-actions {
+    flex: 1 1 100%;
+    order: 2;
+  }
+
+  .al-header-actions > * {
+    flex: 1 1 140px;
+  }
+
+  /* The top bar already shows the brand; keep the bell and the profile. */
+  .al-notices {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .al-profile {
+    order: 0;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .al-shell {
+    --al-gutter: 16px;
+  }
+
+  .al-content {
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+
+  .al-header-title h1 {
+    font-size: 21px;
+  }
+
+  .al-notice-panel {
+    position: fixed;
+    top: calc(64px + env(safe-area-inset-top, 0px));
+    right: 16px;
+    left: 16px;
+
+    width: auto;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-sidebar,
+  .al-sidebar.open {
+    transition: none;
+  }
+}

@@ -1,0 +1,592 @@
+
+/* =========================================================
+   NOVACART ADMIN - ACTIVITY LOGS
+   ========================================================= */
+
+/* =========================================================
+   SIDEBAR - MATCH CUSTOMER DASHBOARD
+   ========================================================= */
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+/* =========================================================
+   MOBILE TOP BAR AND OVERLAY
+   ========================================================= */
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.activity-log-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.activity-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #e4e9f0;
+  border-radius: 13px;
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.activity-summary-icon {
+  display: flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+}
+
+.activity-summary-icon.blue {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.activity-summary-icon.green {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.activity-summary-icon.orange {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.activity-summary-icon.red {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.activity-summary-card > div:last-child {
+  min-width: 0;
+}
+
+.activity-summary-card span {
+  display: block;
+  margin-bottom: 4px;
+  color: #7b8494;
+  font-size: 11px;
+}
+
+.activity-summary-card strong {
+  display: block;
+  color: #172033;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* =========================================================
+   ACTIVITY CARD
+   ========================================================= */
+
+.admin-activity-log-card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #e4e9f0;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.admin-activity-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 21px 23px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.admin-activity-log-header > div {
+  min-width: 0;
+}
+
+.admin-activity-log-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 16px;
+}
+
+.admin-activity-log-header p {
+  margin: 4px 0 0;
+  color: #7b8494;
+  font-size: 11px;
+}
+
+.export-log-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.export-log-button:hover {
+  border-color: var(--primary-dark);
+  background: var(--primary-dark);
+}
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.activity-log-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 17px 23px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.activity-log-search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d9dfe8;
+  border-radius: 8px;
+  background: #fff;
+  color: #8a94a3;
+}
+
+.activity-log-search:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.activity-log-search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #273246;
+  font-size: 12px;
+}
+
+.activity-log-search input::placeholder {
+  color: #9aa3b1;
+}
+
+.activity-filter-select,
+.date-filter-button {
+  flex-shrink: 0;
+  height: 40px;
+  border: 1px solid #d9dfe8;
+  border-radius: 8px;
+  background: #fff;
+  color: #4b5565;
+  font-size: 12px;
+}
+
+.activity-filter-select {
+  min-width: 135px;
+  padding: 0 10px;
+}
+
+.activity-filter-select:hover {
+  border-color: var(--primary);
+}
+
+.date-filter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.admin-activity-timeline {
+  width: 100%;
+  padding: 0 23px;
+}
+
+.admin-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 19px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.admin-timeline-item:last-child {
+  border-bottom: none;
+}
+
+.admin-timeline-icon {
+  display: flex;
+  flex: 0 0 39px;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 10px;
+}
+
+.admin-timeline-icon.success {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.admin-timeline-icon.security {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.admin-timeline-icon.warning {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.admin-timeline-icon.info {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.admin-timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-timeline-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-timeline-title strong {
+  color: #273246;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.activity-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border-radius: 12px;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.activity-type-badge.success {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.activity-type-badge.security {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.activity-type-badge.warning {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.activity-type-badge.info {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.admin-timeline-content p {
+  margin: 6px 0 8px;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-timeline-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-timeline-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9aa3b1;
+  font-size: 9px;
+}
+
+.clock-icon {
+  display: inline-block;
+}
+
+.timeline-view-indicator {
+  display: flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  border: 1px solid #dfe5ed;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--primary);
+}
+
+/* =========================================================
+   EMPTY STATE AND FOOTER
+   ========================================================= */
+
+.activity-log-empty {
+  padding: 50px 20px;
+  color: #8993a3;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.activity-log-footer {
+  padding: 15px 23px;
+  border-top: 1px solid #edf0f4;
+  color: #8993a3;
+  font-size: 10px;
+}
+
+/* =========================================================
+   TABLET - 1000px
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .activity-log-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   MOBILE DRAWER - 800px
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .activity-log-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .activity-log-search {
+    flex: auto;
+    width: 100%;
+  }
+
+  .activity-filter-select,
+  .date-filter-button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-activity-log-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .export-log-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE - 600px
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .activity-log-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .activity-summary-card {
+    padding: 16px;
+  }
+
+  .admin-activity-log-header {
+    padding: 18px;
+  }
+
+  .activity-log-filters {
+    padding: 16px 18px;
+  }
+
+  .admin-activity-timeline {
+    padding: 0 18px;
+  }
+
+  .admin-timeline-item {
+    gap: 10px;
+  }
+
+  .admin-timeline-icon {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .admin-timeline-title strong {
+    font-size: 12px;
+  }
+
+  .admin-timeline-content p {
+    font-size: 10px;
+  }
+
+  .admin-timeline-meta {
+    gap: 8px;
+  }
+
+  .admin-timeline-meta > span {
+    font-size: 8px;
+  }
+
+  .timeline-view-indicator {
+    flex-basis: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .activity-log-footer {
+    padding: 14px 18px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES - 400px
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+  .admin-activity-log-header {
+    padding: 16px;
+  }
+
+  .activity-log-filters {
+    padding: 14px 16px;
+  }
+
+  .admin-activity-timeline {
+    padding: 0 12px;
+  }
+
+  .admin-timeline-item {
+    gap: 8px;
+  }
+
+  .admin-timeline-icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .admin-timeline-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .admin-timeline-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .timeline-view-indicator {
+    flex-basis: 26px;
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-summary-card {
+    transition: none;
+  }
+
+  .activity-summary-card:hover {
+    transform: none;
+  }
+}
+
+/* ---- Date range select (inside the pill) ---- */
+.date-filter-button select {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0 4px 0 0;
+  height: 100%;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.date-filter-button select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.activity-log-empty {
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.activity-log-footer {
+  padding-top: 14px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
