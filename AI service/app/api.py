@@ -1,7 +1,10 @@
+
 import os
+import re
+import logging
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, HTTPException, status
 from pydantic import BaseModel
 
 from app.llm import LLMService
@@ -13,19 +16,40 @@ from app.guardrails import (
 from app.security_logger import log_security_event
 
 
+# ==================================================
+# 1. CONFIGURATION
+# ==================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 AI_SERVICE_API_KEY = os.getenv("AI_SERVICE_API_KEY")
 
 if not AI_SERVICE_API_KEY:
-    raise RuntimeError("AI_SERVICE_API_KEY is not configured")
+    raise RuntimeError(
+        "AI_SERVICE_API_KEY is not configured"
+    )
 
+
+# ==================================================
+# 2. FASTAPI
+# ==================================================
 
 app = FastAPI(
     title="NovaCart AI Service",
-    version="1.0.0",
+    version="2.0.0",
 )
 
+
+# ==================================================
+# 3. MODELS
+# ==================================================
 
 class ChatRequest(BaseModel):
     message: str
@@ -37,8 +61,101 @@ class ChatResponse(BaseModel):
     response: str
 
 
+# ==================================================
+# 4. INITIALIZE GEMINI
+# ==================================================
+
 ai = LLMService()
 
+
+# ==================================================
+# 5. GREETINGS
+# ==================================================
+
+def handle_greeting(message: str) -> str | None:
+    normalized = re.sub(
+        r"[^\w\s']",
+        " ",
+        message.lower(),
+    )
+
+    normalized = " ".join(normalized.split())
+
+    greetings = {
+        "hi",
+        "hello",
+        "hey",
+        "hiya",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    }
+
+    if normalized in greetings:
+        return (
+            "Hello! Welcome to NovaCart Support. "
+            "How can I help you today?"
+        )
+
+    return None
+
+
+# ==================================================
+# 6. SECURITY LOGGING
+# ==================================================
+
+def safe_log_security_event(**kwargs):
+    try:
+        log_security_event(**kwargs)
+    except Exception:
+        logger.exception(
+            "Failed to write security event."
+        )
+
+
+# ==================================================
+# 7. COMPANY-RELATED QUESTION DETECTION
+# ==================================================
+
+COMPANY_KEYWORDS = (
+    "novacart",
+    "return policy",
+    "return a product",
+    "return my product",
+    "refund",
+    "exchange",
+    "shipping",
+    "delivery",
+    "payment method",
+    "payment methods",
+    "order status",
+    "track my order",
+    "where is my order",
+    "cancel my order",
+    "cancellation policy",
+    "warranty",
+    "customer support policy",
+    "privacy policy",
+    "terms and conditions",
+    "my account",
+    "my purchase",
+    "my payment",
+    "my refund",
+)
+
+
+def needs_company_context(message: str) -> bool:
+    normalized = message.lower()
+
+    return any(
+        keyword in normalized
+        for keyword in COMPANY_KEYWORDS
+    )
+
+
+# ==================================================
+# 8. HEALTH CHECK
+# ==================================================
 
 @app.get("/health")
 def health_check():
@@ -48,18 +165,28 @@ def health_check():
     }
 
 
-@app.post("/chat", response_model=ChatResponse)
+# ==================================================
+# 9. CHAT ENDPOINT
+# ==================================================
+
+@app.post(
+    "/chat",
+    response_model=ChatResponse,
+)
 def chat(
     request: ChatRequest,
-    x_ai_service_key: str | None = Header(default=None),
+    x_ai_service_key: str | None = Header(
+        default=None,
+    ),
 ):
-    # -----------------------------
-    # INTERNAL SERVICE AUTHENTICATION
-    # -----------------------------
+    # ----------------------------------------------
+    # A. AUTHENTICATION
+    # ----------------------------------------------
 
-    if x_ai_service_key != AI_SERVICE_API_KEY:
-        from fastapi import HTTPException, status
-
+    if (
+        not AI_SERVICE_API_KEY
+        or x_ai_service_key != AI_SERVICE_API_KEY
+    ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Unauthorized AI service request",
@@ -72,75 +199,167 @@ def chat(
             response="Please enter a message."
         )
 
-    # -----------------------------
-    # INPUT SECURITY
-    # -----------------------------
-
-    if detect_prompt_injection(question):
-
-        try:
-            log_security_event(
-                event_type="PROMPT_INJECTION",
-                severity="HIGH",
-                description=(
-                    "Prompt injection attempt detected "
-                    "by input guardrail."
-                ),
-                action_taken="BLOCKED",
-                user_id=request.user_id,
-                conversation_id=request.conversation_id,
-            )
-        except Exception:
-            pass
-
-        return ChatResponse(
-            response=(
-                "I can't help with requests to reveal "
-                "system instructions or confidential information."
-            )
-        )
-
-    # -----------------------------
-    # RAG RETRIEVAL
-    # -----------------------------
-
-    results = retrieve_relevant_chunks(
-        question,
-        top_k=3,
+    logger.info(
+        "Processing chat request. "
+        "user_id=%s conversation_id=%s",
+        request.user_id,
+        request.conversation_id,
     )
 
-    if not results:
-        return ChatResponse(
-            response=(
-                "I don't have enough information in "
-                "the knowledge base to answer that question."
-            )
-        )
-
-    context_parts = []
-
-    for result in results:
-        context_parts.append(
-            result["content"]
-        )
-
-    context = "\n\n---\n\n".join(
-        context_parts
-    )
-
-    # -----------------------------
-    # LLM
-    # -----------------------------
+    # ----------------------------------------------
+    # B. INPUT GUARDRAIL
+    # ----------------------------------------------
 
     try:
-        response = ai.send_message_with_context(
-            question,
-            context,
+        injection_detected = detect_prompt_injection(
+            question
         )
 
-    except Exception as error:
+    except Exception:
+        logger.exception(
+            "Input security validation failed."
+        )
 
-        error_text = str(error)
+        safe_log_security_event(
+            event_type="INPUT_GUARDRAIL_ERROR",
+            severity="HIGH",
+            description=(
+                "Input security validation failed."
+            ),
+            action_taken="BLOCKED",
+            user_id=request.user_id,
+            conversation_id=request.conversation_id,
+        )
+
+        return ChatResponse(
+            response=(
+                "I'm temporarily unable to process "
+                "your message safely. Please try again."
+            )
+        )
+
+    if injection_detected:
+        safe_log_security_event(
+            event_type="PROMPT_INJECTION",
+            severity="HIGH",
+            description=(
+                "Potential prompt injection detected."
+            ),
+            action_taken="BLOCKED",
+            user_id=request.user_id,
+            conversation_id=request.conversation_id,
+        )
+
+        return ChatResponse(
+            response=(
+                "I can't help reveal confidential "
+                "instructions or private information."
+            )
+        )
+
+    # ----------------------------------------------
+    # C. HANDLE SIMPLE GREETINGS
+    # ----------------------------------------------
+
+    greeting = handle_greeting(question)
+
+    if greeting is not None:
+        return ChatResponse(response=greeting)
+
+    # ----------------------------------------------
+    # D. RETRIEVE CONTEXT ONLY WHEN NEEDED
+    # ----------------------------------------------
+
+    company_question = needs_company_context(question)
+    context = ""
+
+    if company_question:
+        try:
+            results = retrieve_relevant_chunks(
+                question,
+                top_k=3,
+            )
+
+            context_parts = []
+
+            for result in results or []:
+                content = result.get("content")
+
+                if (
+                    isinstance(content, str)
+                    and content.strip()
+                ):
+                    context_parts.append(content.strip())
+
+            context = "\n\n---\n\n".join(
+                context_parts
+            )
+
+            logger.info(
+                "Knowledge-base retrieval completed. "
+                "chunks=%s",
+                len(context_parts),
+            )
+
+        except Exception:
+            logger.exception(
+                "Knowledge-base retrieval failed."
+            )
+
+            context = ""
+
+    # ----------------------------------------------
+    # E. DO NOT INVENT MISSING COMPANY FACTS
+    # ----------------------------------------------
+
+    if company_question and not context:
+        return ChatResponse(
+            response=(
+                "I couldn't find enough verified "
+                "NovaCart information to answer that "
+                "question. Please contact a support "
+                "agent for assistance."
+            )
+        )
+
+    # ----------------------------------------------
+    # F. CALL GEMINI
+    # ----------------------------------------------
+
+    try:
+        if company_question:
+            response = ai.send_message_with_context(
+                question,
+                context,
+            )
+        else:
+            response = ai.send_message(question)
+
+        if (
+            not isinstance(response, str)
+            or not response.strip()
+        ):
+            logger.error(
+                "Gemini returned an empty response."
+            )
+
+            return ChatResponse(
+                response=(
+                    "I couldn't generate a response. "
+                    "Please try again."
+                )
+            )
+
+        response = response.strip()
+
+    except Exception as error:
+        logger.exception(
+            "Gemini response generation failed. "
+            "error_type=%s",
+            type(error).__name__,
+        )
+
+        error_text = str(error).upper()
 
         if (
             "429" in error_text
@@ -148,8 +367,9 @@ def chat(
         ):
             return ChatResponse(
                 response=(
-                    "I'm temporarily unable to process "
-                    "your request. Please try again later."
+                    "The AI service has reached its "
+                    "current usage limit. Please try "
+                    "again later."
                 )
             )
 
@@ -159,38 +379,43 @@ def chat(
         ):
             return ChatResponse(
                 response=(
-                    "The support service is temporarily "
+                    "The AI service is temporarily "
                     "unavailable. Please try again."
                 )
             )
 
         return ChatResponse(
             response=(
-                "I'm sorry, but I couldn't process "
-                "your request."
+                "I'm sorry, I couldn't process your "
+                "message. Please try again."
             )
         )
 
-    # -----------------------------
-    # OUTPUT SECURITY
-    # -----------------------------
+    # ----------------------------------------------
+    # G. OUTPUT VALIDATION
+    # ----------------------------------------------
 
-    if not validate_llm_output(response):
+    try:
+        valid_output = validate_llm_output(response)
 
-        try:
-            log_security_event(
-                event_type="UNSAFE_LLM_OUTPUT",
-                severity="HIGH",
-                description=(
-                    "LLM response failed output "
-                    "security validation."
-                ),
-                action_taken="BLOCKED",
-                user_id=request.user_id,
-                conversation_id=request.conversation_id,
-            )
-        except Exception:
-            pass
+    except Exception:
+        logger.exception(
+            "Output security validation failed."
+        )
+
+        valid_output = False
+
+    if not valid_output:
+        safe_log_security_event(
+            event_type="UNSAFE_LLM_OUTPUT",
+            severity="HIGH",
+            description=(
+                "AI response failed output validation."
+            ),
+            action_taken="BLOCKED",
+            user_id=request.user_id,
+            conversation_id=request.conversation_id,
+        )
 
         return ChatResponse(
             response=(
@@ -199,10 +424,8 @@ def chat(
             )
         )
 
-    # -----------------------------
-    # SUCCESS
-    # -----------------------------
+    # ----------------------------------------------
+    # H. RETURN RESPONSE
+    # ----------------------------------------------
 
-    return ChatResponse(
-        response=response
-    )
+    return ChatResponse(response=response)
