@@ -32,8 +32,12 @@ ACTIVE_WINDOW = timedelta(hours=24)
 # --------------------------------------------------------------------------
 
 def _role(user: User) -> str:
-    role = getattr(user, "role", "")
-    return str(getattr(role, "value", role)).upper()
+    role = getattr(user, "role", None)
+
+    if role is None:
+        return ""
+
+    return str(getattr(role, "name", "")).upper()
 
 
 def require_admin(current_user: User = Depends(get_current_user)) -> User:
