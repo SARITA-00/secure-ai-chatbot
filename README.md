@@ -1,382 +1,687 @@
 # Secure AI Chatbot for Customer Support
 
-A secure AI-powered customer support chatbot designed to answer customer queries while helping protect the application against prompt injection, jailbreak attempts, and unauthorized data access.
+A secure AI-powered customer support chatbot designed to answer user queries using a Retrieval-Augmented Generation (RAG) pipeline while applying authentication, authorization, prompt-injection protection, output validation, and security logging.
 
-> **Project type:** Software Engineering / Academic Project  
-> **AI service:** NovaCart AI Service  
-> **Backend communication:** REST API over HTTPS in production  
-> **Database:** PostgreSQL (for persistent application data, when configured)
+## Features
 
-## Table of Contents
+- AI-powered customer support chatbot
+- Retrieval-Augmented Generation (RAG)
+- PDF/document-based knowledge retrieval
+- Vector similarity search using PostgreSQL and pgvector
+- Gemini-based embeddings and response generation
+- JWT-based user authentication
+- Role-based access control
+- Conversation and message management
+- Customer support ticket management
+- Admin dashboard functionality
+- Prompt-injection detection
+- LLM output validation
+- Security-event logging
+- Audit logging
+- Protected communication between the backend and AI service
+- REST APIs using FastAPI
+- React-based web interface
 
-- [Overview](#overview)
-- [Objectives](#objectives)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Configuration](#configuration)
-- [API Usage](#api-usage)
-- [Security Design](#security-design)
-- [Database](#database)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Team Contributions](#team-contributions)
-- [Limitations and Future Enhancements](#limitations-and-future-enhancements)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-The **Secure AI Chatbot for Customer Support** provides an AI-based conversational interface for handling customer questions. Alongside generating helpful responses, the system is designed with security controls to reduce the risk of malicious prompts and inappropriate access to protected information.
-
-The application separates the user-facing interface, backend/API logic, and AI service. This separation supports easier maintenance, testing, and future integration with a database and additional security controls.
-
-## Objectives
-
-- Provide useful, natural-language responses to customer queries.
-- Integrate a pretrained large language model (LLM) through an AI service.
-- Identify and handle potentially malicious prompts, including prompt injection and jailbreak attempts.
-- Prevent the chatbot from revealing information that the user is not authorized to access.
-- Record security-relevant events for review and auditing.
-- Keep the application modular so its interface, backend, AI service, and database can be maintained independently.
-
-## Key Features
-
-- **AI-powered responses:** Generates responses to customer support questions using an integrated AI model.
-- **REST API integration:** Allows the frontend and AI service to communicate through defined HTTP endpoints.
-- **Input validation:** Validates incoming requests before processing them.
-- **Prompt-security controls:** Designed to detect or mitigate prompt injection and jailbreak attempts.
-- **Access protection:** Sensitive data should only be returned after server-side authorization checks.
-- **Security logging:** Supports recording relevant security events without unnecessarily storing secrets or sensitive customer content.
-- **Modular architecture:** Separates interface, backend logic, AI processing, and persistence.
-- **Extensible design:** Can be expanded with authentication, conversation history, analytics, and administrator tools.
-
-> Security controls must be verified in the actual implementation. A language model or prompt instructions alone cannot guarantee that every malicious request will be blocked.
+---
 
 ## System Architecture
 
-Typical request flow:
+```text
+                         ┌─────────────────────┐
+                         │      Customer       │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │ React + TypeScript  │
+                         │      Frontend       │
+                         └──────────┬──────────┘
+                                    │
+                              REST API
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │   FastAPI Backend   │
+                         │                     │
+                         │ Authentication      │
+                         │ Authorization       │
+                         │ Conversations       │
+                         │ Support Tickets     │
+                         │ Security Logging    │
+                         └──────────┬──────────┘
+                                    │
+                           Protected API Call
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │     AI Service      │
+                         │      FastAPI        │
+                         └──────────┬──────────┘
+                                    │
+                   ┌────────────────┼────────────────┐
+                   │                │                │
+                   ▼                ▼                ▼
+              Guardrails          RAG             Gemini
+                   │                │                │
+                   │        ┌───────┴───────┐        │
+                   │        │               │        │
+                   │        ▼               ▼        │
+                   │   Embeddings      Vector Search │
+                   │        │               │        │
+                   │        └───────┬───────┘        │
+                   │                │                │
+                   └────────────────┼────────────────┘
+                                    │
+                                    ▼
+                              AI Response
+```
 
-1. A customer submits a message through the web interface.
-2. The frontend sends the request to the backend API.
-3. The backend validates the request and applies applicable authentication, authorization, and security checks.
-4. The backend sends an approved request to the NovaCart AI Service.
-5. The AI service processes the message using the configured model and returns a response.
-6. The backend applies any required output checks and returns the response to the frontend.
-7. Relevant security events are logged, and application data is stored in PostgreSQL when persistence is configured.
+---
+
+## How the Chatbot Works
+
+### 1. User Authentication
+
+The user accesses the React frontend and authenticates through the FastAPI backend.
+
+The backend uses JWT-based authentication to protect application endpoints.
+
+### 2. User Sends a Query
+
+The user enters a customer-support question through the chatbot interface.
+
+The frontend sends the request to the backend through the REST API.
+
+### 3. Backend Processing
+
+The backend:
+
+- verifies the authenticated user
+- checks authorization
+- processes the conversation request
+- communicates with the protected AI service
+
+### 4. AI Service
+
+The AI service receives the query and processes it through the RAG and security pipeline.
+
+### 5. Retrieval-Augmented Generation
+
+The RAG pipeline retrieves relevant information from the application's document knowledge base.
+
+The process is:
 
 ```text
-Customer
-   |
-   v
-Web / Chat Interface
-   |
-   v
-Backend REST API
-   |---- Request validation and security checks
-   |---- Authentication / authorization (when configured)
-   |---- Security event logging
-   |
-   v
-NovaCart AI Service
-   |
-   v
-Configured pretrained LLM
-   |
-   v
-Backend response checks
-   |
-   v
-Customer receives response
-
-Backend --------------------> PostgreSQL
-              application data / history
-              (when configured)
+Documents / PDFs
+       ↓
+Document Loading
+       ↓
+Text Extraction
+       ↓
+Text Chunking
+       ↓
+Embedding Generation
+       ↓
+PostgreSQL + pgvector
 ```
+
+For a user query:
+
+```text
+User Query
+    ↓
+Query Embedding
+    ↓
+Vector Similarity Search
+    ↓
+Relevant Document Chunks
+    ↓
+Context Construction
+    ↓
+Gemini
+    ↓
+Generated Response
+```
+
+### 6. Security Checks
+
+The AI service includes security mechanisms such as:
+
+- prompt-injection detection
+- security-related request checks
+- output validation
+- security-event logging
+
+The generated response is checked before being returned to the backend.
+
+### 7. Response
+
+The validated response is returned through the backend to the React frontend and displayed to the user.
+
+---
 
 ## Technology Stack
 
-The exact versions and all dependencies should be confirmed from the project's dependency files.
+### Frontend
 
-| Component | Technology / Purpose |
-|---|---|
-| User interface | Project's existing frontend framework |
-| Backend | Project's configured backend framework |
-| AI service | NovaCart AI Service |
-| Language model | Configured pretrained LLM through the AI integration |
-| API communication | REST API |
-| Transport security | HTTPS/TLS in production |
-| Database | PostgreSQL, when configured |
-| Version control | Git and GitHub |
+- React
+- TypeScript
+- Vite
+
+### Backend
+
+- Python
+- FastAPI
+- SQLAlchemy
+- Alembic
+- JWT authentication
+- pwdlib
+
+### AI Service
+
+- Python
+- FastAPI
+- Gemini API
+- Retrieval-Augmented Generation
+- Embeddings
+- Custom retrieval pipeline
+
+### Database
+
+- PostgreSQL
+- pgvector
+
+### Document Processing
+
+- PDF/document loading
+- Text chunking
+- Embedding generation
+- Vector similarity search
+
+---
 
 ## Project Structure
 
-The repository may differ from this illustrative layout. Keep this section aligned with the actual folders in your GitHub repository.
-
 ```text
 secure-ai-chatbot/
-├── frontend/          # Customer-facing interface
-├── backend/           # Main backend/API (if separated)
-├── AI service/        # NovaCart AI Service
-├── database/          # Schema or database scripts (if present)
-├── tests/             # Automated tests (if present)
-├── .env.example       # Example environment variables (if present)
+│
+├── frontend-integrated-updated/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── types/
+│   │   └── utils/
+│   ├── .env.example
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── vite.config.ts
+│   └── tsconfig.json
+│
+├── backend/
+│   ├── app/
+│   │   ├── models/
+│   │   ├── routers/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── database.py
+│   │   ├── dependencies.py
+│   │   └── ...
+│   ├── alembic/
+│   │   └── versions/
+│   ├── .env.example
+│   ├── main.py
+│   └── seed_roles.py
+│
+├── AI service/
+│   ├── app/
+│   │   ├── rag/
+│   │   │   ├── chunker.py
+│   │   │   ├── database.py
+│   │   │   ├── embeddings.py
+│   │   │   ├── generator.py
+│   │   │   ├── ingest.py
+│   │   │   ├── loader.py
+│   │   │   ├── retriever.py
+│   │   │   └── ...
+│   │   ├── api.py
+│   │   ├── chatbot.py
+│   │   ├── config.py
+│   │   ├── guardrails.py
+│   │   ├── llm.py
+│   │   ├── prompts.py
+│   │   └── security_logger.py
+│   │
+│   └── test_*.py
+│
 ├── .gitignore
 └── README.md
 ```
 
+---
+
 ## Prerequisites
 
-Install the tools required by the components you are running:
+Install the following before running the project:
 
-- Git
-- Python, if the AI service or backend is Python-based
-- Node.js and npm, if the frontend is Node.js-based
-- PostgreSQL, if the application uses a local PostgreSQL database
-- API credentials for the configured LLM provider, if required
+- Node.js
+- npm
+- Python
+- PostgreSQL
+- PostgreSQL with the pgvector extension
+- Gemini API key
 
-Check the project's dependency files and existing setup instructions for the exact versions.
+---
 
-## Getting Started
+# Configuration
 
-### 1. Clone the repository
+The project contains environment-example files for the frontend, backend, and AI service.
 
-```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <YOUR_REPOSITORY_FOLDER>
-```
+Do **not** commit actual API keys, passwords, JWT secrets, or database credentials to GitHub.
 
-Replace the placeholders with your actual GitHub repository URL and folder name.
+---
 
-### 2. Configure environment variables
+## Backend Environment Variables
 
-Create the appropriate `.env` file for each service, based on the environment-variable names expected by the code. If the project provides an `.env.example`, copy it and fill in the required values.
+Create/configure the backend environment using the variables required by the backend configuration.
 
-Example values (illustrative only—use the variable names expected by your code):
+Example:
 
 ```env
-# AI provider
-LLM_API_KEY=your_api_key_here
+DATABASE_URL=postgresql+psycopg://username:password@host/database
+JWT_SECRET_KEY=replace-with-a-secure-secret
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-# Database (if enabled)
-DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+AI_SERVICE_URL=http://127.0.0.1:8001
+AI_SERVICE_API_KEY=your-ai-service-key
 
-# Application settings
-APP_ENV=development
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-**Never commit real API keys, database passwords, access tokens, or other secrets to GitHub.** Keep local `.env` files out of version control.
+Use your actual PostgreSQL connection details.
 
-### 3. Start the AI service
+---
 
-Open a terminal in the AI service directory:
+## AI Service Environment Variables
 
-```powershell
+Configure the AI service with the required Gemini and database credentials.
+
+Example:
+
+```env
+GEMINI_API_KEY=your-gemini-api-key
+DATABASE_URL=postgresql://username:password@host/database
+AI_SERVICE_API_KEY=your-ai-service-key
+```
+
+The `AI_SERVICE_API_KEY` must match the key configured for communication between the backend and AI service.
+
+---
+
+## Frontend Environment Variables
+
+Configure the frontend API URL:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+---
+
+# Running the Project
+
+The project consists of three main parts:
+
+1. AI service
+2. Backend
+3. Frontend
+
+Run them separately.
+
+---
+
+## 1. Start the AI Service
+
+Open a terminal and navigate to the AI service directory.
+
+```bash
 cd "AI service"
 ```
 
-If it is a Python project with a `requirements.txt`, create and activate a virtual environment and install dependencies:
+Create and activate a Python virtual environment if required:
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+### Windows
+
+```bash
+python -m venv venv
+venv\Scripts\activate
 ```
 
-Start the service using the command defined by the project. For example, if the application exposes a FastAPI `app` in `main.py`:
+Install the Python dependencies used by the AI service.
 
-```powershell
-uvicorn main:app --reload --host 127.0.0.1 --port 8001
+Then start the service:
+
+```bash
+uvicorn app.api:app --reload --host 127.0.0.1 --port 8001
 ```
 
-The example command assumes that `main.py` contains the expected ASGI application. Use your actual module and application name if they differ.
+The AI service will run on:
 
-### 4. Check the AI service
-
-If the service provides the health endpoint used during development, test it in PowerShell:
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8001/health
+```text
+http://127.0.0.1:8001
 ```
 
-The expected response should indicate that the service is healthy. The exact response depends on the implementation.
+---
 
-### 5. Start the backend and frontend
+## 2. Start the Backend
 
-Follow the instructions and scripts in the backend and frontend directories. For a Node.js frontend, the common workflow is:
+Open another terminal and navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+Create and activate the Python virtual environment if required:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+Install the backend dependencies used by the project.
+
+Start the FastAPI backend:
+
+```bash
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+The backend will run on:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## 3. Start the Frontend
+
+Open another terminal:
+
+```bash
+cd frontend-integrated-updated
+```
+
+Install the Node.js dependencies:
 
 ```bash
 npm install
+```
+
+Start the Vite development server:
+
+```bash
 npm run dev
 ```
 
-Run these commands only in the directory containing the relevant `package.json`. The available scripts may differ; inspect `package.json` before starting the application.
+The frontend will normally be available at:
 
-If the backend is a separate service, start it in its own terminal using its documented command.
-
-### 6. Open the application
-
-Use the local URL printed by the frontend's development server. Confirm that the frontend can reach the backend and that the backend can reach the AI service.
-
-## Configuration
-
-Before running the project, confirm:
-
-- The AI provider's API key is set in the correct environment.
-- The configured model name matches a model available to the selected provider.
-- Frontend API URLs point to the correct backend.
-- Backend AI-service URLs point to the correct AI service.
-- CORS settings allow only the required frontend origins.
-- Database connection details are configured if persistence is enabled.
-- Production deployments use HTTPS and securely managed secrets.
-
-Do not assume that the example environment-variable names above match the source code. Use the names read by the application.
-
-## API Usage
-
-The AI service has been developed with a health check and chat workflow in the local setup. Confirm the route definitions and request schema in the source code before relying on these examples.
-
-### Health check
-
-```http
-GET /health
+```text
+http://localhost:5173
 ```
 
-Example local request:
+---
 
-```powershell
-Invoke-RestMethod http://127.0.0.1:8001/health
+# Database
+
+The application uses PostgreSQL for persistent application data.
+
+The project also uses **pgvector** for storing and searching vector embeddings used by the RAG system.
+
+The database is used for application data such as:
+
+- users
+- roles
+- conversations
+- messages
+- documents
+- document chunks
+- security events
+- audit information
+- support tickets
+
+Database migrations are managed using Alembic.
+
+---
+
+# RAG Pipeline
+
+The RAG system allows the chatbot to retrieve relevant information from the application's document knowledge base before generating an answer.
+
+## Document Ingestion
+
+```text
+PDF / Document
+      ↓
+Loader
+      ↓
+Text Extraction
+      ↓
+Chunking
+      ↓
+Embedding Generation
+      ↓
+Vector Database
 ```
 
-### Chat request
+## Query Processing
 
-The chat endpoint used during local development is:
-
-```http
-POST /chat
-Content-Type: application/json
+```text
+User Question
+      ↓
+Query Embedding
+      ↓
+Vector Search
+      ↓
+Relevant Chunks
+      ↓
+Context
+      ↓
+Gemini
+      ↓
+Response
 ```
 
-The JSON body must match the schema implemented by the service. For example, **only if** the endpoint expects a `message` field:
+This allows the chatbot to use information retrieved from the configured knowledge base instead of relying only on the model's general knowledge.
 
-```json
-{
-  "message": "How can I get help with my order?"
-}
+---
+
+# Security
+
+Security is an important part of the project.
+
+### Authentication
+
+The backend uses JWT-based authentication to protect user-specific functionality.
+
+### Authorization
+
+The application includes role-based access control for protected functionality.
+
+### Prompt-Injection Protection
+
+The AI service includes prompt-injection detection mechanisms to identify potentially malicious instructions contained in user input.
+
+### Output Validation
+
+Generated AI responses are processed through output-validation logic before being returned to the application.
+
+### AI Service Protection
+
+Communication between the backend and AI service is protected using an API key.
+
+### Security Logging
+
+Security-related events can be recorded for monitoring and auditing purposes.
+
+### Audit Logging
+
+The backend provides audit-related functionality for tracking important application actions.
+
+### Secret Management
+
+Sensitive credentials such as:
+
+- Gemini API keys
+- database passwords
+- JWT secrets
+- AI service keys
+
+should be stored in environment variables rather than committed to the repository.
+
+---
+
+# Main Application Areas
+
+The project contains functionality for:
+
+### Customer
+
+- User authentication
+- AI chatbot
+- Conversations
+- Messages
+- Support tickets
+
+### Admin
+
+- Administrative dashboard
+- User-related management
+- Conversation-related information
+- Security events
+- Audit information
+- Support tickets
+
+---
+
+# API
+
+The backend exposes REST API endpoints through FastAPI.
+
+The project includes API areas for functionality such as:
+
+```text
+/auth
+/chat
+/conversations
+/security-events
+/audit-logs
+/support-tickets
+/admin
+/health
 ```
 
-Example PowerShell request, if that request schema is correct:
+The exact available endpoints and request/response schemas are defined in the FastAPI routers and schemas in the project.
 
-```powershell
-$body = @{
-    message = "How can I get help with my order?"
-} | ConvertTo-Json
+FastAPI also provides interactive API documentation when the backend is running.
 
-Invoke-RestMethod `
-  -Uri "http://127.0.0.1:8001/chat" `
-  -Method Post `
-  -ContentType "application/json" `
-  -Body $body
+---
+
+# Testing
+
+The project contains tests covering different parts of the system, including:
+
+- RAG functionality
+- Retriever
+- Embeddings
+- Document loading
+- Document chunking
+- Document ingestion
+- Database functionality
+- Guardrails
+- Output guardrails
+- Prompt-injection scenarios
+- Security logging
+- LLM/RAG functionality
+
+Example test files include:
+
+```text
+test_guardrails.py
+test_output_guardrail.py
+test_prompt_injection_rag.py
+test_rag.py
+test_retriever.py
+test_embedding.py
+test_embeddings_rag.py
+test_database.py
+test_security_logger.py
+test_ingest.py
+test_loader.py
+test_chunker.py
+test_llm_rag.py
 ```
 
-Use the actual request fields and response format from your implementation. In production, expose services through the intended backend and use HTTPS; do not expose internal service endpoints or API credentials to the browser.
+Run the available tests using the project's configured Python test environment.
 
-## Security Design
+---
 
-The project focuses on the following security concerns:
+# Security Considerations
 
-- **Prompt injection:** Treat user messages and retrieved content as untrusted input. Apply layered detection and policy checks.
-- **Jailbreak attempts:** Test requests that try to override system instructions or bypass the chatbot's intended restrictions.
-- **Unauthorized data access:** Enforce authorization in backend code before accessing or returning protected records. Never rely on the LLM alone for access control.
-- **Input validation:** Validate request shape, size, types, and required fields.
-- **Output handling:** Avoid returning secrets or protected data; safely render model-generated content in the frontend.
-- **Transport security:** Use HTTPS/TLS for production communication.
-- **Security logging:** Record relevant events with timestamps and useful event categories. Avoid logging passwords, API keys, session tokens, or unnecessary personal data.
-- **Secret management:** Store credentials in environment variables or a dedicated secrets manager, not in source code.
-- **Error handling:** Return safe error messages without exposing stack traces, internal prompts, credentials, or infrastructure details.
+This project is designed as a secure AI customer-support application, but no security mechanism can guarantee complete protection against every possible attack.
 
-These are design goals, not a claim that all protections are already implemented. Confirm each control against the code and tests.
+The implemented protections should therefore be treated as layers of defense rather than a complete security guarantee.
 
-## Database
+In particular:
 
-PostgreSQL can be used to persist application data such as user accounts, conversations, message metadata, and audit events, depending on the project's schema and requirements.
+- Prompt-injection detection may not identify every possible attack.
+- Output validation does not guarantee complete removal of unsafe content.
+- RAG quality depends on the quality and coverage of the configured knowledge base.
+- The AI functionality depends on the configured Gemini service.
+- Production deployment should add appropriate infrastructure-level security, monitoring, rate limiting, secret management, and access controls.
 
-If database persistence is enabled:
+---
 
-1. Create the database and a least-privilege application user.
-2. Configure the connection string through environment variables.
-3. Apply the project's migrations or schema scripts.
-4. Use parameterized queries or a safe ORM to reduce SQL injection risk.
-5. Restrict access to data according to the authenticated user's permissions.
-6. Back up data and define an appropriate retention policy for conversation and audit records.
+# Future Improvements
 
-If PostgreSQL integration has not yet been implemented, treat this section as planned functionality rather than an existing feature.
+Possible future improvements include:
 
-## Testing
+- More advanced prompt-injection detection
+- Stronger authorization policies
+- Rate limiting
+- Improved document management
+- Better RAG evaluation
+- Source/citation display for retrieved documents
+- Automated security testing
+- Production monitoring and alerting
+- Improved privacy controls
+- CI/CD integration
 
-Test the system at multiple levels:
+---
 
-- **Functional tests:** Normal customer questions and expected responses.
-- **API tests:** Valid requests, malformed requests, missing fields, and unavailable services.
-- **Security tests:** Prompt injection, jailbreak attempts, requests for secrets, and unauthorized data-access attempts.
-- **Integration tests:** Frontend-to-backend and backend-to-AI-service communication.
-- **Database tests:** Persistence, authorization, and query safety, if database integration is enabled.
-- **Regression tests:** Ensure security changes do not break normal customer support.
+## Project Purpose
 
-Document test cases, expected results, actual results, and known limitations. Do not use real customer data or production secrets in test prompts.
+The project demonstrates how an AI customer-support application can combine:
 
-## Deployment
+```text
+Web Application
+       +
+Secure Backend
+       +
+Authentication & Authorization
+       +
+RAG
+       +
+Vector Search
+       +
+LLM
+       +
+Security Guardrails
+       +
+Logging & Auditing
+```
 
-A typical deployment process is:
-
-1. Commit and push reviewed code to GitHub.
-2. Configure environment variables and secrets on the deployment platform.
-3. Deploy the frontend, backend, and AI service according to their runtime requirements.
-4. Provision PostgreSQL if the application requires persistent data.
-5. Configure HTTPS/TLS, CORS, access controls, and health checks.
-6. Run smoke tests for the main chat flow and security controls.
-7. Review logs and confirm that secrets are not exposed.
-
-The exact deployment platform and commands depend on the frameworks and hosting services used. Do not deploy with development-only settings such as debug mode or publicly exposed internal service ports.
-
-## Team Contributions
-
-Update this section with the team's agreed responsibilities.
-
-| Team member | Responsibility |
-|---|---|
-| Member 1 | Frontend / customer interface — confirm actual assignment |
-| Member 2 | AI integration / chatbot service — confirm actual assignment |
-| Member 3 | Security, backend, database, or testing — confirm actual assignment |
-
-## Limitations and Future Enhancements
-
-Potential future improvements include:
-
-- Stronger authentication and role-based access control.
-- Persistent conversation history and user-specific context.
-- Expanded automated security and adversarial testing.
-- Admin dashboard for monitoring and audit review.
-- Rate limiting, abuse detection, and operational metrics.
-- Retrieval-augmented generation (RAG) using approved support documentation.
-- Improved privacy controls and configurable data-retention policies.
-- Deployment automation and continuous integration.
-
-Only describe planned items as completed after they have been implemented and tested.
-
-## Contributing
-
-For a team or academic project:
-
-1. Create a branch for your changes.
-2. Keep changes focused and add tests where practical.
-3. Do not commit credentials, `.env` files, or private customer data.
-4. Test the affected features before opening a pull request.
-5. Update this README when setup steps, APIs, or configuration change.
-
-## License
-
-No license has been specified yet. Add a license that matches your team's intended use and any third-party dependencies before distributing the project publicly.
+to build a more secure and context-aware customer-support chatbot.
