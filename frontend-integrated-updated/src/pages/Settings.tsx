@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Bell, Check, Eye, EyeOff, Lock, Menu, MessageSquare, ShieldCheck, User, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import CustomerSidebar from "../components/CustomerSidebar";
+import { api } from "../services/api";
 import { getInitials, getUser } from "../utils/session";
 import "./Settings.css";
 
@@ -27,6 +28,26 @@ const defaultSettings: SettingsData = {
   chatHistory: true,
   twoFactorEnabled: false,
   loginAlerts: true,
+};
+
+const applyTheme = (theme: string) => {
+  const root = document.documentElement;
+
+  if (theme === "Dark") {
+    root.setAttribute("data-theme", "dark");
+    root.style.colorScheme = "dark";
+    return;
+  }
+
+  if (theme === "System Default") {
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    root.setAttribute("data-theme", prefersDark ? "dark" : "light");
+    root.style.colorScheme = prefersDark ? "dark" : "light";
+    return;
+  }
+
+  root.setAttribute("data-theme", "light");
+  root.style.colorScheme = "light";
 };
 
 function Settings() {
@@ -70,15 +91,25 @@ function Settings() {
       try {
         const parsedSettings = JSON.parse(storedSettings);
 
-        setSettings({
+        const nextSettings = {
           ...defaultSettings,
           ...parsedSettings,
-        });
+        };
+
+        setSettings(nextSettings);
+        applyTheme(nextSettings.theme);
       } catch {
         setSettings(defaultSettings);
+        applyTheme(defaultSettings.theme);
       }
+    } else {
+      applyTheme(defaultSettings.theme);
     }
   }, []);
+
+  useEffect(() => {
+    applyTheme(settings.theme);
+  }, [settings.theme]);
 
   /* ================= UPDATE SETTING ================= */
 
@@ -141,7 +172,7 @@ function Settings() {
     });
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     setPasswordError("");
     setPasswordSuccess("");
 
@@ -150,9 +181,7 @@ function Settings() {
       !passwordForm.newPassword ||
       !passwordForm.confirmPassword
     ) {
-      setPasswordError(
-        "Please fill in all password fields."
-      );
+      setPasswordError("Please fill in all password fields.");
       return;
     }
 
@@ -167,9 +196,7 @@ function Settings() {
       passwordForm.newPassword !==
       passwordForm.confirmPassword
     ) {
-      setPasswordError(
-        "New passwords do not match."
-      );
+      setPasswordError("New passwords do not match.");
       return;
     }
 
@@ -183,15 +210,28 @@ function Settings() {
       return;
     }
 
-    setPasswordSuccess(
-      "Your password has been changed successfully."
-    );
+    try {
+      await api.changePassword(
+        passwordForm.currentPassword,
+        passwordForm.newPassword
+      );
 
-    setPasswordForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+      setPasswordSuccess(
+        "Your password has been changed successfully."
+      );
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err) {
+      setPasswordError(
+        err instanceof Error
+          ? err.message
+          : "Unable to change your password."
+      );
+    }
   };
 
   /* ================= TWO FACTOR ================= */
@@ -358,12 +398,23 @@ function Settings() {
               <select
                 className="settings-select"
                 value={settings.theme}
-                onChange={(event) =>
-                  updateSetting(
-                    "theme",
-                    event.target.value
-                  )
-                }
+                onChange={(event) => {
+                  const theme = event.target.value;
+
+                  updateSetting("theme", theme);
+
+                  const currentSettings = {
+                    ...settings,
+                    theme,
+                  };
+
+                  localStorage.setItem(
+                    "novacart-settings",
+                    JSON.stringify(currentSettings)
+                  );
+
+                  applyTheme(theme);
+                }}
               >
                 <option>Light</option>
                 <option>Dark</option>
