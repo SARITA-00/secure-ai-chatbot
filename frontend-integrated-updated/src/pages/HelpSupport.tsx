@@ -1,3 +1,4 @@
+
 import {
   AlertCircle,
   ArrowRight,
@@ -10,14 +11,10 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-
 import { useRef, useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import CustomerSidebar from "../components/CustomerSidebar";
 import { api } from "../services/api";
-
 import "./HelpSupport.css";
 
 function HelpSupport() {
@@ -28,9 +25,12 @@ function HelpSupport() {
   const [contactOpen, setContactOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState("");
   const [contactDescription, setContactDescription] = useState("");
-  const [contactPriority, setContactPriority] = useState("MEDIUM");
+  const [contactPriority, setContactPriority] = useState<
+    "LOW" | "MEDIUM" | "HIGH"
+  >("MEDIUM");
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [contactMessage, setContactMessage] = useState("");
+  const [contactSuccess, setContactSuccess] = useState(false);
 
   const faqSectionRef = useRef<HTMLElement | null>(null);
 
@@ -76,6 +76,13 @@ function HelpSupport() {
     setMobileMenuOpen(false);
   };
 
+  const closeContactModal = () => {
+    if (contactSubmitting) return;
+    setContactOpen(false);
+    setContactMessage("");
+    setContactSuccess(false);
+  };
+
   const handleBrowseGuides = () => {
     faqSectionRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -89,6 +96,7 @@ function HelpSupport() {
     event.preventDefault();
 
     if (!contactSubject.trim() || !contactDescription.trim()) {
+      setContactSuccess(false);
       setContactMessage("Please enter both a subject and description.");
       return;
     }
@@ -96,13 +104,16 @@ function HelpSupport() {
     try {
       setContactSubmitting(true);
       setContactMessage("");
+      setContactSuccess(false);
 
-      await api.createSupportTicket({
-        subject: contactSubject.trim(),
-        description: contactDescription.trim(),
-        priority: contactPriority,
-      });
+      // Match the three-argument signature defined in services/api.ts.
+      await api.createSupportTicket(
+        contactSubject.trim(),
+        contactDescription.trim(),
+        contactPriority
+      );
 
+      setContactSuccess(true);
       setContactMessage(
         "Your support request has been submitted successfully."
       );
@@ -111,15 +122,19 @@ function HelpSupport() {
       setContactDescription("");
       setContactPriority("MEDIUM");
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         setContactOpen(false);
         setContactMessage("");
+        setContactSuccess(false);
       }, 1500);
     } catch (error) {
       console.error("Failed to create support ticket:", error);
 
+      setContactSuccess(false);
       setContactMessage(
-        "Unable to submit your request. Please try again."
+        error instanceof Error
+          ? error.message
+          : "Unable to submit your request. Please try again."
       );
     } finally {
       setContactSubmitting(false);
@@ -128,10 +143,6 @@ function HelpSupport() {
 
   return (
     <div className="help-page">
-      {/* ================================
-          SIDEBAR
-      ================================= */}
-
       <CustomerSidebar
         open={mobileMenuOpen}
         onClose={closeMobileMenu}
@@ -144,19 +155,12 @@ function HelpSupport() {
         />
       )}
 
-      {/* ================================
-          MAIN
-      ================================= */}
-
       <main className="help-main">
-        {/* Mobile top bar */}
-
         <div className="help-mobile-topbar">
           <div className="help-mobile-brand">
             <div className="help-mobile-logo">
               <ShieldCheck size={20} />
             </div>
-
             <div>
               <strong>NovaCart</strong>
               <span>AI Support</span>
@@ -173,18 +177,14 @@ function HelpSupport() {
           </button>
         </div>
 
-        {/* Header */}
-
         <header className="help-header">
           <div>
             <h1>Help & Support</h1>
-
             <p>Find answers and get help with NovaCart</p>
           </div>
 
           <div className="help-user-profile">
             <div className="help-avatar">JD</div>
-
             <div className="help-user-info">
               <strong>John Doe</strong>
               <span>Customer</span>
@@ -193,25 +193,19 @@ function HelpSupport() {
         </header>
 
         <div className="help-content">
-          {/* ================================
-              SEARCH
-          ================================= */}
-
           <section className="help-search-card">
             <div className="help-search-icon">
               <Search size={24} />
             </div>
 
             <h2>How can we help?</h2>
-
             <p>
-              Search our help resources or browse the
-              frequently asked questions below.
+              Search our help resources or browse the frequently asked
+              questions below.
             </p>
 
             <div className="help-search">
               <Search size={19} />
-
               <input
                 type="text"
                 value={searchQuery}
@@ -224,60 +218,40 @@ function HelpSupport() {
             </div>
           </section>
 
-          {/* ================================
-              SUPPORT OPTIONS
-          ================================= */}
-
           <section className="help-section">
             <div className="help-section-heading">
               <h2>Support Options</h2>
-
-              <p>
-                Choose the option that best matches your needs.
-              </p>
+              <p>Choose the option that best matches your needs.</p>
             </div>
 
             <div className="support-options">
-              {/* AI SUPPORT */}
-
               <div className="support-card">
                 <div className="support-card-icon">
                   <MessageCircle size={23} />
                 </div>
-
                 <div className="support-card-content">
                   <h3>Chat with AI Support</h3>
-
                   <p>
-                    Get instant answers to common questions
-                    using the NovaCart AI Support Assistant.
+                    Get instant answers to common questions using the
+                    NovaCart AI Support Assistant.
                   </p>
-
-                  <Link
-                    to="/chat"
-                    className="support-link"
-                  >
+                  <Link to="/chat" className="support-link">
                     Start a Chat
                     <ArrowRight size={16} />
                   </Link>
                 </div>
               </div>
 
-              {/* HELP CENTER */}
-
               <div className="support-card">
                 <div className="support-card-icon">
                   <BookOpen size={23} />
                 </div>
-
                 <div className="support-card-content">
                   <h3>Help Center</h3>
-
                   <p>
-                    Browse guides and useful information
-                    about using NovaCart.
+                    Browse guides and useful information about using
+                    NovaCart.
                   </p>
-
                   <button
                     type="button"
                     className="support-link"
@@ -289,27 +263,23 @@ function HelpSupport() {
                 </div>
               </div>
 
-              {/* CONTACT SUPPORT */}
-
               <div className="support-card">
                 <div className="support-card-icon">
                   <Mail size={23} />
                 </div>
-
                 <div className="support-card-content">
                   <h3>Contact Support</h3>
-
                   <p>
-                    Need additional help? Contact our
-                    customer support team.
+                    Need additional help? Contact our customer support
+                    team.
                   </p>
-
                   <button
                     type="button"
                     className="support-link"
                     onClick={() => {
                       setContactOpen(true);
                       setContactMessage("");
+                      setContactSuccess(false);
                     }}
                   >
                     Contact Us
@@ -320,20 +290,10 @@ function HelpSupport() {
             </div>
           </section>
 
-          {/* ================================
-              FAQ
-          ================================= */}
-
-          <section
-            className="help-section"
-            ref={faqSectionRef}
-          >
+          <section className="help-section" ref={faqSectionRef}>
             <div className="help-section-heading">
               <h2>Frequently Asked Questions</h2>
-
-              <p>
-                Quick answers to common questions.
-              </p>
+              <p>Quick answers to common questions.</p>
             </div>
 
             <div className="faq-card">
@@ -351,7 +311,6 @@ function HelpSupport() {
                       onClick={() => toggleFaq(index)}
                     >
                       <span>{faq.question}</span>
-
                       <ChevronDown
                         size={19}
                         className="faq-chevron"
@@ -359,49 +318,32 @@ function HelpSupport() {
                     </button>
 
                     {openFaq === index && (
-                      <div className="faq-answer">
-                        {faq.answer}
-                      </div>
+                      <div className="faq-answer">{faq.answer}</div>
                     )}
                   </div>
                 ))
               ) : (
                 <div className="faq-empty">
                   <Search size={22} />
-
                   <h3>No matching questions</h3>
-
-                  <p>
-                    Try searching with a different keyword.
-                  </p>
+                  <p>Try searching with a different keyword.</p>
                 </div>
               )}
             </div>
           </section>
 
-          {/* ================================
-              SECURITY NOTICE
-          ================================= */}
-
           <section className="help-security-card">
             <div className="help-security-icon">
               <AlertCircle size={22} />
             </div>
-
             <div>
               <h3>Notice something suspicious?</h3>
-
               <p>
-                If you notice an unfamiliar login,
-                unexpected account activity, or anything
-                unusual, review your Activity Log and
-                contact support.
+                If you notice an unfamiliar login, unexpected account
+                activity, or anything unusual, review your Activity Log
+                and contact support.
               </p>
-
-              <Link
-                to="/activity"
-                className="security-help-link"
-              >
+              <Link to="/activity" className="security-help-link">
                 View Activity Log
                 <ArrowRight size={16} />
               </Link>
@@ -409,10 +351,6 @@ function HelpSupport() {
           </section>
         </div>
       </main>
-
-      {/* ================================
-          CONTACT SUPPORT MODAL
-      ================================= */}
 
       {contactOpen && (
         <div
@@ -426,12 +364,7 @@ function HelpSupport() {
             zIndex: 2000,
             padding: "20px",
           }}
-          onClick={() => {
-            if (!contactSubmitting) {
-              setContactOpen(false);
-              setContactMessage("");
-            }
-          }}
+          onClick={closeContactModal}
         >
           <div
             style={{
@@ -462,7 +395,6 @@ function HelpSupport() {
                 >
                   Contact Support
                 </h2>
-
                 <p
                   style={{
                     margin: "6px 0 0",
@@ -476,12 +408,8 @@ function HelpSupport() {
 
               <button
                 type="button"
-                onClick={() => {
-                  if (!contactSubmitting) {
-                    setContactOpen(false);
-                    setContactMessage("");
-                  }
-                }}
+                onClick={closeContactModal}
+                disabled={contactSubmitting}
                 style={{
                   border: "none",
                   background: "transparent",
@@ -497,6 +425,7 @@ function HelpSupport() {
             <form onSubmit={handleContactSubmit}>
               <div style={{ marginBottom: "16px" }}>
                 <label
+                  htmlFor="support-subject"
                   style={{
                     display: "block",
                     marginBottom: "7px",
@@ -506,8 +435,8 @@ function HelpSupport() {
                 >
                   Subject
                 </label>
-
                 <input
+                  id="support-subject"
                   type="text"
                   value={contactSubject}
                   onChange={(event) =>
@@ -515,6 +444,7 @@ function HelpSupport() {
                   }
                   placeholder="What do you need help with?"
                   disabled={contactSubmitting}
+                  required
                   style={{
                     width: "100%",
                     boxSizing: "border-box",
@@ -528,6 +458,7 @@ function HelpSupport() {
 
               <div style={{ marginBottom: "16px" }}>
                 <label
+                  htmlFor="support-priority"
                   style={{
                     display: "block",
                     marginBottom: "7px",
@@ -537,11 +468,13 @@ function HelpSupport() {
                 >
                   Priority
                 </label>
-
                 <select
+                  id="support-priority"
                   value={contactPriority}
                   onChange={(event) =>
-                    setContactPriority(event.target.value)
+                    setContactPriority(
+                      event.target.value as "LOW" | "MEDIUM" | "HIGH"
+                    )
                   }
                   disabled={contactSubmitting}
                   style={{
@@ -562,6 +495,7 @@ function HelpSupport() {
 
               <div style={{ marginBottom: "18px" }}>
                 <label
+                  htmlFor="support-description"
                   style={{
                     display: "block",
                     marginBottom: "7px",
@@ -571,8 +505,8 @@ function HelpSupport() {
                 >
                   Description
                 </label>
-
                 <textarea
+                  id="support-description"
                   value={contactDescription}
                   onChange={(event) =>
                     setContactDescription(event.target.value)
@@ -580,6 +514,7 @@ function HelpSupport() {
                   placeholder="Describe your issue..."
                   rows={5}
                   disabled={contactSubmitting}
+                  required
                   style={{
                     width: "100%",
                     boxSizing: "border-box",
@@ -594,20 +529,13 @@ function HelpSupport() {
 
               {contactMessage && (
                 <div
+                  role="status"
                   style={{
                     marginBottom: "16px",
                     padding: "11px 12px",
                     borderRadius: "8px",
-                    background: contactMessage.includes(
-                      "successfully"
-                    )
-                      ? "#ecfdf5"
-                      : "#fef2f2",
-                    color: contactMessage.includes(
-                      "successfully"
-                    )
-                      ? "#047857"
-                      : "#b91c1c",
+                    background: contactSuccess ? "#ecfdf5" : "#fef2f2",
+                    color: contactSuccess ? "#047857" : "#b91c1c",
                     fontSize: "14px",
                   }}
                 >
@@ -624,21 +552,14 @@ function HelpSupport() {
               >
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!contactSubmitting) {
-                      setContactOpen(false);
-                      setContactMessage("");
-                    }
-                  }}
+                  onClick={closeContactModal}
                   disabled={contactSubmitting}
                   style={{
                     padding: "10px 18px",
                     border: "1px solid #d8dee9",
                     borderRadius: "8px",
                     background: "#ffffff",
-                    cursor: contactSubmitting
-                      ? "not-allowed"
-                      : "pointer",
+                    cursor: contactSubmitting ? "not-allowed" : "pointer",
                   }}
                 >
                   Cancel
@@ -654,14 +575,10 @@ function HelpSupport() {
                     background: "#d85d88",
                     color: "#ffffff",
                     fontWeight: 600,
-                    cursor: contactSubmitting
-                      ? "not-allowed"
-                      : "pointer",
+                    cursor: contactSubmitting ? "not-allowed" : "pointer",
                   }}
                 >
-                  {contactSubmitting
-                    ? "Submitting..."
-                    : "Submit Request"}
+                  {contactSubmitting ? "Submitting..." : "Submit Request"}
                 </button>
               </div>
             </form>
