@@ -28,12 +28,22 @@ class LLMService:
             ),
         )
 
-        self.chat = self.client.chats.create(
-            model=GEMINI_MODEL,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_INSTRUCTION,
-            ),
+        # Primary model followed by optional fallback models.
+        # Configure GEMINI_FALLBACK_MODELS in Render as a
+        # comma-separated list of models supported by your key.
+        fallback_value = __import__("os").getenv(
+            "GEMINI_FALLBACK_MODELS", ""
         )
+
+        fallback_models = [
+            model.strip()
+            for model in fallback_value.split(",")
+            if model.strip()
+        ]
+
+        self.models = list(dict.fromkeys(
+            [GEMINI_MODEL] + fallback_models
+        ))
 
     def _is_quota_error(self, error: Exception) -> bool:
         message = str(error).upper()
@@ -46,72 +56,89 @@ class LLMService:
     def _is_temporary_error(self, error: Exception) -> bool:
         message = str(error).upper()
 
-        return (
-            "500" in message
-            or "502" in message
-            or "503" in message
-            or "504" in message
-            or "INTERNAL" in message
-            or "UNAVAILABLE" in message
-            or "DEADLINE_EXCEEDED" in message
-            or "TIMEOUT" in message
-        )
+        return any(marker in message for marker in (
+            "500",
+            "502",
+            "503",
+            "504",
+            "INTERNAL",
+            "UNAVAILABLE",
+            "DEADLINE_EXCEEDED",
+            "TIMEOUT",
+        ))
 
     def _send_with_retry(self, prompt: str) -> str:
-        max_attempts = 3
+        last_error = None
 
-        for attempt in range(max_attempts):
-            try:
-                response = self.chat.send_message(prompt)
+        for model_index, model in enumerate(self.models):
+            chat = self.client.chats.create(
+                model=model,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_INSTRUCTION,
+                ),
+            )
 
-                answer = response.text
-
-                if not isinstance(answer, str) or not answer.strip():
-                    raise RuntimeError(
-                        "Gemini returned no text. "
-                        "The response may have been blocked "
-                        "or contained no text candidate."
+            for attempt in range(3):
+                try:
+                    logger.info(
+                        "Calling Gemini model %s (attempt %s/3).",
+                        model,
+                        attempt + 1,
                     )
 
-                return answer.strip()
+                    response = chat.send_message(prompt)
+                    answer = response.text
 
-            except Exception as error:
-                logger.error(
-                    "Gemini request failed on attempt %s/%s. "
-                    "Error type: %s. Details: %s",
-                    attempt + 1,
-                    max_attempts,
-                    type(error).__name__,
-                    str(error),
-                    exc_info=True,
-                )
+                    if not isinstance(answer, str) or not answer.strip():
+                        raise RuntimeError(
+                            "Gemini returned an empty response."
+                        )
 
-                if self._is_quota_error(error):
-                    raise
+                    logger.info(
+                        "Gemini response succeeded using model %s.",
+                        model,
+                    )
 
-                if not self._is_temporary_error(error):
-                    raise
+                    return answer.strip()
 
-                if attempt == max_attempts - 1:
-                    raise
+                except Exception as error:
+                    last_error = error
 
-                delay = 2 ** attempt
+                    logger.warning(
+                        "Gemini model %s failed on attempt %s/3: %s",
+                        model,
+                        attempt + 1,
+                        type(error).__name__,
+                    )
 
+                    if self._is_quota_error(error):
+                        # A fallback might have a different quota.
+                        # Continue to it, but do not repeatedly retry
+                        # the exhausted model.
+                        break
+
+                    if not self._is_temporary_error(error):
+                        # Configuration, authentication, and other
+                        # non-transient errors should be visible.
+                        raise
+
+                    if attempt < 2:
+                        time.sleep(2 ** attempt)
+
+            # Move to the next model only after the current model
+            # has exhausted its retries or quota.
+            if model_index < len(self.models) - 1:
                 logger.warning(
-                    "Temporary Gemini error. "
-                    "Retrying in %s seconds.",
-                    delay,
+                    "Trying fallback Gemini model after failure of %s.",
+                    model,
                 )
 
-                time.sleep(delay)
+        if last_error is not None:
+            raise last_error
 
-        raise RuntimeError("Gemini request failed.")
+        raise RuntimeError("No Gemini model was configured.")
 
     def send_message(self, message: str) -> str:
-        """
-        Answer general questions and ordinary conversation.
-        """
-
         prompt = f"""
 Respond directly and naturally to the user's message.
 
@@ -136,7 +163,6 @@ USER MESSAGE:
 
 Answer:
 """
-
         return self._send_with_retry(prompt)
 
     def send_message_with_context(
@@ -144,10 +170,6 @@ Answer:
         message: str,
         context: str,
     ) -> str:
-        """
-        Answer questions using verified knowledge-base context.
-        """
-
         if not context or not context.strip():
             return self.send_message(message)
 
@@ -175,5 +197,4 @@ CUSTOMER QUESTION:
 
 Answer:
 """
-
         return self._send_with_retry(prompt)
