@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Mail, Menu, Pencil, ShieldCheck, User, X } from "lucide-react";
 import CustomerSidebar from "../components/CustomerSidebar";
@@ -9,7 +10,6 @@ import "./Profile.css";
 function Profile() {
   const [profile, setProfile] = useState<ApiUser | null>(getUser());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
@@ -20,16 +20,14 @@ function Profile() {
   useEffect(() => {
     let cancelled = false;
 
-    api
-      .me()
+    api.me()
       .then((fresh) => {
         if (cancelled) return;
-
         updateStoredUser(fresh);
         setProfile(fresh);
       })
       .catch(() => {
-        /* keep showing stored copy */
+        // Keep showing the stored profile if refreshing fails.
       });
 
     return () => {
@@ -37,9 +35,7 @@ function Profile() {
     };
   }, []);
 
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   const openEditProfile = () => {
     setEditName(profile?.name ?? "");
@@ -51,13 +47,12 @@ function Profile() {
 
   const closeEditProfile = () => {
     if (saving) return;
-
     setEditOpen(false);
     setMessage("");
     setError("");
   };
 
-  const saveProfile = async (event: React.FormEvent) => {
+  const saveProfile = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const name = editName.trim();
@@ -78,17 +73,13 @@ function Profile() {
     setMessage("");
 
     try {
-      const updatedUser = await api.updateProfile({
-        name,
-        email,
-      });
+      const updatedUser = await api.updateProfile({ name, email });
 
       updateStoredUser(updatedUser);
       setProfile(updatedUser);
-
       setMessage("Profile updated successfully.");
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         setEditOpen(false);
         setMessage("");
       }, 800);
@@ -115,14 +106,11 @@ function Profile() {
 
   return (
     <div className="profile-page">
-      {/* MOBILE TOP BAR */}
-
       <header className="profile-mobile-topbar">
         <div className="profile-mobile-brand">
           <div className="profile-mobile-logo">
             <ShieldCheck size={20} />
           </div>
-
           <div>
             <strong>NovaCart</strong>
             <span>AI Support</span>
@@ -148,10 +136,7 @@ function Profile() {
         />
       )}
 
-      <CustomerSidebar
-        open={mobileMenuOpen}
-        onClose={closeMobileMenu}
-      />
+      <CustomerSidebar open={mobileMenuOpen} onClose={closeMobileMenu} />
 
       <main className="profile-main">
         <header className="profile-page-header">
@@ -162,17 +147,12 @@ function Profile() {
         </header>
 
         <section className="profile-content">
-          {/* OVERVIEW */}
-
           <div className="profile-overview-card">
-            <div className="profile-avatar">
-              {getInitials(name)}
-            </div>
+            <div className="profile-avatar">{getInitials(name)}</div>
 
             <div className="profile-overview-info">
               <h2>{name}</h2>
               <p>{email}</p>
-
               <span className="profile-member-badge">
                 {roleLabel} Account
               </span>
@@ -181,17 +161,12 @@ function Profile() {
             <button
               type="button"
               className="profile-edit-button"
-              onClick={() => {
-                alert("EDIT PROFILE BUTTON WORKS");
-                openEditProfile();
-              }}
+              onClick={openEditProfile}
             >
               <Pencil size={16} />
               Edit Profile
             </button>
           </div>
-
-          {/* PERSONAL INFORMATION */}
 
           <section className="profile-card">
             <div className="profile-card-header">
@@ -206,12 +181,8 @@ function Profile() {
                 <div className="profile-info-icon">
                   <User size={17} />
                 </div>
-
                 <div>
-                  <span className="profile-info-label">
-                    Full Name
-                  </span>
-
+                  <span className="profile-info-label">Full Name</span>
                   <strong>{name}</strong>
                 </div>
               </div>
@@ -220,19 +191,13 @@ function Profile() {
                 <div className="profile-info-icon">
                   <Mail size={17} />
                 </div>
-
                 <div>
-                  <span className="profile-info-label">
-                    Email Address
-                  </span>
-
+                  <span className="profile-info-label">Email Address</span>
                   <strong>{email}</strong>
                 </div>
               </div>
             </div>
           </section>
-
-          {/* ACCOUNT SECURITY */}
 
           <section className="profile-card">
             <div className="profile-card-header">
@@ -247,14 +212,12 @@ function Profile() {
                 <div className="profile-security-icon">
                   <ShieldCheck size={19} />
                 </div>
-
                 <div className="profile-security-info">
                   <strong>Password</strong>
                   <span>
                     Manage your password from account security settings.
                   </span>
                 </div>
-
                 <button
                   type="button"
                   className="profile-outline-button"
@@ -268,8 +231,6 @@ function Profile() {
             </div>
           </section>
 
-          {/* ACCOUNT STATUS */}
-
           <section className="profile-card">
             <div className="profile-card-header">
               <div>
@@ -280,32 +241,21 @@ function Profile() {
 
             <div className="profile-login-grid">
               <div className="profile-login-item">
-                <span className="profile-info-label">
-                  Account Status
-                </span>
-
+                <span className="profile-info-label">Account Status</span>
                 <div className="profile-status-row">
                   <span className="profile-status-dot" />
-
-                  <strong>
-                    {profile?.is_active ? "Active" : "Inactive"}
-                  </strong>
+                  <strong>{profile?.is_active ? "Active" : "Inactive"}</strong>
                 </div>
               </div>
 
               <div className="profile-login-item">
-                <span className="profile-info-label">
-                  Account Type
-                </span>
-
+                <span className="profile-info-label">Account Type</span>
                 <strong>{roleLabel}</strong>
               </div>
             </div>
           </section>
         </section>
       </main>
-
-      {/* EDIT PROFILE MODAL */}
 
       {editOpen && (
         <div
@@ -322,7 +272,6 @@ function Profile() {
                 <h2>Edit Profile</h2>
                 <p>Update your account information</p>
               </div>
-
               <button
                 type="button"
                 className="profile-modal-close"
@@ -336,46 +285,31 @@ function Profile() {
 
             <form onSubmit={saveProfile}>
               <div className="profile-form-field">
-                <label htmlFor="profile-name">
-                  Full Name
-                </label>
-
+                <label htmlFor="profile-name">Full Name</label>
                 <input
                   id="profile-name"
                   type="text"
                   value={editName}
-                  onChange={(event) =>
-                    setEditName(event.target.value)
-                  }
+                  onChange={(event) => setEditName(event.target.value)}
                   disabled={saving}
                   autoFocus
                 />
               </div>
 
               <div className="profile-form-field">
-                <label htmlFor="profile-email">
-                  Email Address
-                </label>
-
+                <label htmlFor="profile-email">Email Address</label>
                 <input
                   id="profile-email"
                   type="email"
                   value={editEmail}
-                  onChange={(event) =>
-                    setEditEmail(event.target.value)
-                  }
+                  onChange={(event) => setEditEmail(event.target.value)}
                   disabled={saving}
                 />
               </div>
 
-              {error && (
-                <div className="profile-form-error">
-                  {error}
-                </div>
-              )}
-
+              {error && <div className="profile-form-error">{error}</div>}
               {message && (
-                <div className="profile-form-success">
+                <div className="profile-form-success" role="status">
                   {message}
                 </div>
               )}
@@ -389,7 +323,6 @@ function Profile() {
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
                   className="profile-modal-save"
