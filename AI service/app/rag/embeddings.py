@@ -1,26 +1,16 @@
-from google import genai
-from google.genai import types
 
-from app.config import GEMINI_API_KEY
+from sentence_transformers import SentenceTransformer
 
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_DIMENSIONS = 384
 
-client = genai.Client(api_key=GEMINI_API_KEY)
-
-EMBEDDING_MODEL = "gemini-embedding-2"
-EMBEDDING_DIMENSIONS = 768
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 
 def generate_embedding(text: str) -> list[float]:
-    """
-    Generate a 768-dimensional embedding for the given text.
-    """
-
-    result = client.models.embed_content(
-        model=EMBEDDING_MODEL,
-        contents=text,
-        config=types.EmbedContentConfig(
-            output_dimensionality=EMBEDDING_DIMENSIONS
-        )
+    """Generate a local 384-dimensional text embedding."""
+    embedding = model.encode(
+        text,
+        normalize_embeddings=True,
     )
-
-    return result.embeddings[0].values
+    return embedding.tolist()
