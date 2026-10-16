@@ -2,6 +2,9 @@
 import os
 import re
 import logging
+import time
+import threading
+from collections import defaultdict, deque
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException, status
@@ -38,7 +41,54 @@ if not AI_SERVICE_API_KEY:
 
 
 # ==================================================
-# 2. FASTAPI
+# 2. RATE LIMITING CONFIGURATION
+# ==================================================
+
+CHAT_RATE_LIMIT = int(
+    os.getenv("CHAT_RATE_LIMIT", "5")
+)
+
+CHAT_RATE_WINDOW = int(
+    os.getenv("CHAT_RATE_WINDOW", "60")
+)
+
+if CHAT_RATE_LIMIT < 1 or CHAT_RATE_WINDOW < 1:
+    raise ValueError(
+        "CHAT_RATE_LIMIT and CHAT_RATE_WINDOW must be positive integers"
+    )
+
+_rate_limit_lock = threading.Lock()
+_request_timestamps = defaultdict(deque)
+
+
+def check_chat_rate_limit(user_id: int | None) -> bool:
+    """
+    Allow at most CHAT_RATE_LIMIT requests per user
+    within CHAT_RATE_WINDOW seconds.
+    """
+
+    if user_id is None:
+        return False
+
+    now = time.monotonic()
+    cutoff = now - CHAT_RATE_WINDOW
+    key = str(user_id)
+
+    with _rate_limit_lock:
+        timestamps = _request_timestamps[key]
+
+        while timestamps and timestamps[0] <= cutoff:
+            timestamps.popleft()
+
+        if len(timestamps) >= CHAT_RATE_LIMIT:
+            return False
+
+        timestamps.append(now)
+        return True
+
+
+# ==================================================
+# 3. FASTAPI
 # ==================================================
 
 app = FastAPI(
@@ -48,7 +98,7 @@ app = FastAPI(
 
 
 # ==================================================
-# 3. MODELS
+# 4. MODELS
 # ==================================================
 
 class ChatRequest(BaseModel):
@@ -62,14 +112,14 @@ class ChatResponse(BaseModel):
 
 
 # ==================================================
-# 4. INITIALIZE GEMINI
+# 5. INITIALIZE GEMINI
 # ==================================================
 
 ai = LLMService()
 
 
 # ==================================================
-# 5. GREETINGS
+# 6. GREETINGS
 # ==================================================
 
 def handle_greeting(message: str) -> str | None:
@@ -101,7 +151,7 @@ def handle_greeting(message: str) -> str | None:
 
 
 # ==================================================
-# 6. SECURITY LOGGING
+# 7. SECURITY LOGGING
 # ==================================================
 
 def safe_log_security_event(**kwargs):
@@ -114,7 +164,7 @@ def safe_log_security_event(**kwargs):
 
 
 # ==================================================
-# 7. COMPANY-RELATED QUESTION DETECTION
+# 8. COMPANY-RELATED QUESTION DETECTION
 # ==================================================
 
 COMPANY_KEYWORDS = (
@@ -154,7 +204,7 @@ def needs_company_context(message: str) -> bool:
 
 
 # ==================================================
-# 8. HEALTH CHECK
+# 9. HEALTH CHECK
 # ==================================================
 
 @app.get("/health")
@@ -166,7 +216,7 @@ def health_check():
 
 
 # ==================================================
-# 9. CHAT ENDPOINT
+# 10. CHAT ENDPOINT
 # ==================================================
 
 @app.post(
@@ -192,6 +242,27 @@ def chat(
             detail="Unauthorized AI service request",
         )
 
+    # ----------------------------------------------
+    # B. RATE LIMITING
+    # ----------------------------------------------
+
+    if not check_chat_rate_limit(request.user_id):
+        logger.warning(
+            "Chat rate limit exceeded. user_id=%s",
+            request.user_id,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                "Chat rate limit exceeded. "
+                "Please try again later."
+            ),
+            headers={
+                "Retry-After": str(CHAT_RATE_WINDOW)
+            },
+        )
+
     question = request.message.strip()
 
     if not question:
@@ -207,7 +278,7 @@ def chat(
     )
 
     # ----------------------------------------------
-    # B. INPUT GUARDRAIL
+    # C. INPUT GUARDRAIL
     # ----------------------------------------------
 
     try:
@@ -258,7 +329,7 @@ def chat(
         )
 
     # ----------------------------------------------
-    # C. HANDLE SIMPLE GREETINGS
+    # D. HANDLE SIMPLE GREETINGS
     # ----------------------------------------------
 
     greeting = handle_greeting(question)
@@ -267,7 +338,7 @@ def chat(
         return ChatResponse(response=greeting)
 
     # ----------------------------------------------
-    # D. RETRIEVE CONTEXT ONLY WHEN NEEDED
+    # E. RETRIEVE CONTEXT ONLY WHEN NEEDED
     # ----------------------------------------------
 
     company_question = needs_company_context(question)
@@ -309,7 +380,7 @@ def chat(
             context = ""
 
     # ----------------------------------------------
-    # E. DO NOT INVENT MISSING COMPANY FACTS
+    # F. DO NOT INVENT MISSING COMPANY FACTS
     # ----------------------------------------------
 
     if company_question and not context:
@@ -323,7 +394,7 @@ def chat(
         )
 
     # ----------------------------------------------
-    # F. CALL GEMINI
+    # G. CALL GEMINI
     # ----------------------------------------------
 
     try:
@@ -392,7 +463,7 @@ def chat(
         )
 
     # ----------------------------------------------
-    # G. OUTPUT VALIDATION
+    # H. OUTPUT VALIDATION
     # ----------------------------------------------
 
     try:
@@ -425,7 +496,7 @@ def chat(
         )
 
     # ----------------------------------------------
-    # H. RETURN RESPONSE
+    # I. RETURN RESPONSE
     # ----------------------------------------------
 
     return ChatResponse(response=response)
