@@ -1,54 +1,62 @@
-from google import genai
 
-from app.config import GEMINI_API_KEY
+import logging
+
+from app.llm import LLMService
 from app.rag.retriever import retrieve_relevant_chunks
 
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+logger = logging.getLogger(__name__)
 
-MODEL_NAME = "gemini-3.6-flash"
+ai = LLMService()
 
 
 def generate_rag_answer(query: str, top_k: int = 3) -> str:
     """
-    Retrieve relevant knowledge and generate an answer using Gemini.
+    Retrieve relevant knowledge-base chunks and generate
+    a NovaCart support answer using Groq.
     """
 
-    results = retrieve_relevant_chunks(query, top_k=top_k)
+    question = query.strip()
+
+    if not question:
+        return "Please enter a question."
+
+    # Retrieve relevant knowledge-base chunks.
+    results = retrieve_relevant_chunks(
+        question,
+        top_k=top_k,
+    )
 
     if not results:
-        return "I could not find relevant information in the knowledge base."
+        return (
+            "I could not find relevant information "
+            "in the knowledge base."
+        )
 
-    context_parts = []
+    # Build context from retrieved document chunks.
+    context_parts = [
+        result["content"]
+        for result in results
+        if result.get("content")
+    ]
 
-    for result in results:
-        context_parts.append(result["content"])
+    if not context_parts:
+        return (
+            "I could not find relevant information "
+            "in the knowledge base."
+        )
 
     context = "\n\n---\n\n".join(context_parts)
 
-    prompt = f"""
-You are a customer-support assistant.
+    # Generate the answer using the existing Groq service.
+    try:
+        return ai.send_message_with_context(
+            message=question,
+            context=context,
+        )
 
-Answer the user's question using ONLY the information
-provided in the knowledge base below.
-
-If the answer cannot be found in the knowledge base,
-say that you do not have enough information.
-
-Do not invent or assume information.
-
-KNOWLEDGE BASE:
-{context}
-
-USER QUESTION:
-{query}
-
-ANSWER:
-"""
-
-    response = client.models.generate_content(
-        model=MODEL_NAME,
-        contents=prompt
-    )
-
-    return response.text
+    except Exception:
+        logger.exception(
+            "Groq RAG answer generation failed."
+        )
+        raise
